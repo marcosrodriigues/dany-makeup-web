@@ -1,0 +1,16 @@
+.content {
+    margin-top: 24px;
+}
+
+.header {
+    width:  100%;
+    justify-content: space-around;
+}
+
+.header-title {
+    float: left;
+}
+
+.search {
+    float: right;
+}
