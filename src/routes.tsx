@@ -3,8 +3,8 @@ import React from 'react';
 import { BrowserRouter, Route } from 'react-router-dom'
 
 import Home from './pages/Home/Index';
-import Produtos from './pages/Produtos/Index';
-import NovoProduto from './pages/NovoProduto/Index';
+import Produtos from './pages/Products/Index';
+import NovoProduto from './pages/NewProduct/Index';
 
 const Routes = () => {
     return (
