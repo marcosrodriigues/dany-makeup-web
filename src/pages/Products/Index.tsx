@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header/Index';
 
 import './style.css';
@@ -6,8 +6,34 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './style.css';
+import IProduct from '../../interface/IProduct';
+import api from '../../services/api';
+import { IoIosCloseCircleOutline } from 'react-icons/io';
+import { FaEdit } from 'react-icons/fa';
 
 const Produtos = () => {
+    const [products, setProducts] = useState<IProduct[]>([]);
+
+    useEffect(() => {
+        reload();
+    }, [])
+
+    function reload() {
+        api.get('products').then(response => {
+            const { data } = response;
+            setProducts(data);
+        });
+    }
+
+    useEffect(() => {
+        console.log(products);
+    }, [products])
+
+    async function handleRemoveButton(product_id: number) {
+        await api.delete(`products/${product_id}`);
+        reload();
+    }
+
     return (
         <div className="page">
             <Header />
@@ -22,31 +48,48 @@ const Produtos = () => {
                     </div>
 
                     <div className="box-table table-responsive">
-                        <table className="table table-dark table-striped table-hover">
+                    <table className="table table-dark table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope='col'>#</th>
-                                    <th scope='col'>Imagem</th>
-                                    <th scope='col'>Produto</th>
-                                    <th scope='col'>Valor</th>
-                                    <th scope='col'>Opções</th>
+                                <th scope='col' className="table-id">#</th>
+                                    <th scope='col' className="table-image">Imagem</th>
+                                    <th scope='col' className="table-title">Produto</th>
+                                    <th scope='col' className="table-category">Categorias</th>
+                                    <th scope='col' className="table-value">Valor</th>
+                                    <th scope='col' className="table-options">Opções</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                </tr>
+                                {
+                                products.length > 0 ?
+                                    products.map(product => (
+                                    <tr key={product.id}>
+                                        <th scope="row">{product.id}</th>
+                                        <td>
+                                            <img src={product.mainImage} alt={product.name} width="100%" height="120" />
+                                        </td>
+                                        <td>{product.name}</td>
+                                        <td>
+                                            {product.categorys.map(cat => cat.title).join(', ')}
+                                        </td>
+                                        <td>R$ {product.value}</td>
+                                        <td className="td-options">
+                                            <button type="button" className="btn btn-dark">
+                                                <Link to={`/produtos/${product.id}`} className="custom-link" >
+                                                    <FaEdit size={18} />
+                                                </Link>
+                                            </button>
+                                            <button type="button" onClick={() => handleRemoveButton(product.id)} className="btn btn-dark custon-link">
+                                                <IoIosCloseCircleOutline className="custom-link" size={24} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    ))
+                                :
+                                    <tr>
+                                        <td colSpan={6} className="centered">Nenhum produto cadastrado.</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
 

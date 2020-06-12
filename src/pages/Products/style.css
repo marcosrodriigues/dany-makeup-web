@@ -14,3 +14,33 @@
 .search {
     float: right;
 }
+
+.box-table {
+    width: 100%;
+}
+.table-id {
+    width: 5%;
+}
+.table-image {
+    width: 25%;
+}
+.table-title {
+    width: 15%;
+}
+.table-category {
+    width: 20%;
+}
+.table-value{
+    width: 10%;
+}
+.table-options {
+    width: 15%;
+}
+.td-options {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.centered {
+    text-align: center;
+}
