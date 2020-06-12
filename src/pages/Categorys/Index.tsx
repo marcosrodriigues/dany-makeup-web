@@ -82,7 +82,7 @@ const Categorys = () => {
                                     ))
                                 :
                                     <tr>
-                                        <td colSpan={4}>Nenhuma categoria cadastrada.</td>
+                                        <td colSpan={5} className="centered">Nenhuma categoria cadastrada.</td>
                                     </tr>
                                 }
                             </tbody>

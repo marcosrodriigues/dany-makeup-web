@@ -47,17 +47,27 @@
 }
 
 .list-images {
-    background-color: #E1FAEC;
+    background-color: #343a40;
+    color: #d2ae6c;
     width: 100%;
 }
 
 .each-image {
-    padding: 8;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     border-radius: .25rem;
     margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.selected {
+    border: 8px solid #d2ae6c;
 }
 
 .image {
+    align-self: center;
     width: 100%;
     height: 75%;
 }

@@ -6,10 +6,11 @@ import './style.css'
 
 interface Props {
     onFileUploaded: (file: File[]) => void,
+    onSelectMainFile?: (filename: string) => void,
     multiple?: boolean,
     array_image?: string[];
 }
-const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, array_image = [] } ) => {
+const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, onSelectMainFile = () => {}, array_image = [] } ) => {
 
     const MAX_SIZE = 5242880;
     const ACCEPTED_FILES = "image/*"
@@ -72,6 +73,11 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, array_imag
         multiple: true
     })
 
+    function handleClickMainImage(selectedFileUrl: string, selectedFileName: string) {
+        setSelectedUri(selectedFileUrl);
+        onSelectMainFile(selectedFileName);
+    }
+
     const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > MAX_SIZE;
 
     return (
@@ -98,15 +104,30 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, array_imag
             </div>
             { multiple && 
                 <div className="thumbnail">
-                    <p>Imagens adicionadas aparecerão aqui.</p>
+                    <p>
+                        Imagens adicionadas aparecerão aqui. <br />
+                        <small>Selecione a imagem principal do produto</small>
+                    </p>
+                    
                     <div className="list-images row col-sm-12">
                         {
-                        files.length > 0 && files.map((file, index) => (
-                            <div onClick={() => setSelectedUri(urls[index])} key={index} className="each-image col-sm-4">
-                                <img src={urls[index]} className="image" alt="thumbnail" width="100%" height="100%" />
-                                <p className="centered">{file.name}</p>
-                            </div>
-                        ))}
+                        files.length > 0 && files.map((file, index) => {
+                            let className = "each-image col-sm-4 ";
+
+                            if (urls[index] == selectedUri)
+                                className = className + " selected";
+
+                            return (
+                                <div 
+                                    onClick={() => handleClickMainImage(urls[index], file.name)}
+                                    key={index}
+                                    className={className}
+                                >
+                                    <img src={urls[index]} className="image" alt="thumbnail" width="100%" height="100%" />
+                                    <p className="centered">{file.name}</p>
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
             }

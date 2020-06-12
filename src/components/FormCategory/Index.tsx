@@ -13,7 +13,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     const [imageUrl, setImageUrl] = useState<string>("");
     const [id, setId] = useState<number>(0);
     const [available, setAvailable] = useState<boolean>(false);
-
+    
     const [file, setFile] = useState<File>({} as File);  
 
     const [showSucess, setShowSucess] = useState<boolean>(false);
@@ -33,6 +33,8 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
         setFile(selectedFile[0]);
         setImageUrl('');
     }
+
+    
 
     async function handleSubmit(event: FormEvent) {
         event.preventDefault();
@@ -92,7 +94,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                     <Form.Label column sm="4">Título da categoria: </Form.Label>
                     <Col sm="8">
                         <Form.Control placeholder="Título da categoria" required
-                            onChange={handleChangeTitle} 
+                            onChange={(event) => setTitle(event.target.value)} 
                             value={title} 
                         />
                     </Col>
@@ -110,7 +112,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                     </div>
                 </Form.Group>
                 <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" type="submit" >Cadastrar</Button>
+                    <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
                 </Form.Group>
             </div>
         </Form>
