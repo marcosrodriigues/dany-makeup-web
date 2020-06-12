@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 
 import './style.css';
 import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
@@ -60,11 +60,14 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             else await api.post('categorys', data);
 
             setShowSucess(true);
-
         } catch (err) {
             setShowError(true);
             setErrors([err]);
         }
+    }
+
+    function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
+        setTitle(event.target.value);
     }
 
     return (
@@ -89,7 +92,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                     <Form.Label column sm="4">Título da categoria: </Form.Label>
                     <Col sm="8">
                         <Form.Control placeholder="Título da categoria" required
-                            onChange={(event) => setTitle(event.target.value)} 
+                            onChange={handleChangeTitle} 
                             value={title} 
                         />
                     </Col>
