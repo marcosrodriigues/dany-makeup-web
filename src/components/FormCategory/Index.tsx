@@ -1,16 +1,19 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 
 import './style.css';
 import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
-import ICategory from '../../interface/ICategory';
 import IPropsFormCategory from '../../interface/IPropsFormCategory';
 import api from '../../services/api';
 import CustomAlert from '../Alert/Index';
 
 const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 
-    const [currentCategory, setCurrentCategory] = useState<ICategory>({} as ICategory);
+    const [title, setTitle] = useState<string>("");
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [id, setId] = useState<number>(0);
+    const [available, setAvailable] = useState<boolean>(false);
+
     const [file, setFile] = useState<File>({} as File);  
 
     const [showSucess, setShowSucess] = useState<boolean>(false);
@@ -19,17 +22,16 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     
     useEffect(() => {
         if (category) {
-            setCurrentCategory(category);
+            setTitle(category.title);
+            setImageUrl(category.image_url);
+            setId(category.id);
+            setAvailable(category.available);
         }
     }, [category]);
 
     function handleDrop(selectedFile: File[]) {
-        console.log(selectedFile);
         setFile(selectedFile[0]);
-        setCurrentCategory({
-            ...currentCategory,
-            image_url: ''
-        })
+        setImageUrl('');
     }
 
     async function handleSubmit(event: FormEvent) {
@@ -39,42 +41,41 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
         setShowError(false);
         setErrors([]);
 
-        if (!file) {
+        if (!file && imageUrl === "") {
             setErrors(["Insira uma imagem."]);
             setShowError(true);
             return;
         }
 
-        const { title, available } = currentCategory;
         const data = new FormData();
 
+        data.append('id', String(id));
         data.append("title", title);
         data.append('available', String(available));
         
         data.append('image', file);
 
         try {
-            await api.post('categorys', data);
+            if (id !== 0) await api.put('categorys', data)
+            else await api.post('categorys', data);
+
             setShowSucess(true);
-            setCurrentCategory({} as ICategory);
+
         } catch (err) {
             setShowError(true);
             setErrors([err]);
         }
     }
 
-    function handleChange(event: ChangeEvent<HTMLInputElement>) {
-        setCurrentCategory({
-            ...currentCategory, 
-            available: !currentCategory.available
-        });
-    }
-
     return (
         <Form onSubmit={handleSubmit} encType="multipart/form-data"  className="form row">
             <div className="images col-sm-6">
                 <div className="box-images">
-                    <Dropzone onFileUploaded={handleDrop} multiple={false} />
+                    <Dropzone 
+                        onFileUploaded={handleDrop}
+                        multiple={false} 
+                        array_image={[imageUrl]}
+                    />
                 </div>
             </div>
             <div className="info col-sm-6">
@@ -88,8 +89,8 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                     <Form.Label column sm="4">Título da categoria: </Form.Label>
                     <Col sm="8">
                         <Form.Control placeholder="Título da categoria" required
-                            onChange={(event) => setCurrentCategory({...currentCategory, title: event.target.value })} 
-                            value={currentCategory.title} 
+                            onChange={(event) => setTitle(event.target.value)} 
+                            value={title} 
                         />
                     </Col>
                 </Form.Group>
@@ -98,8 +99,8 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                     <div className="col-sm-8">
                         <Form.Check id="disponivel" type="checkbox">
                             <FormCheck.Input
-                                onChange={handleChange}
-                                checked={currentCategory.available} 
+                                onChange={() => setAvailable(!available)}
+                                checked={available} 
                             />
                             <Form.Check.Label>Categoria disponível</Form.Check.Label>
                         </Form.Check>

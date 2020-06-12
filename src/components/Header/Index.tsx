@@ -2,7 +2,7 @@ import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 
 import './style.css'
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const Header = () => {
     return (
@@ -13,12 +13,14 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                         <Nav className="custom-nav">
-                            <Nav.Link><Link to="/categorias" className="custom-link">Categorias</Link></Nav.Link>
-                            <Nav.Link><Link to="/produtos" className="custom-link">Produtos</Link></Nav.Link>
-                            <Nav.Link><Link to="/promocoes" className="custom-link">Promoções</Link></Nav.Link>
-                            <Nav.Link><Link to="/banner" className="custom-link">Banner</Link></Nav.Link>
-                            <Nav.Link><Link to="/clientes" className="custom-link">Clientes</Link></Nav.Link>
-                            <Nav.Link><Link to="/pedidos" className="custom-link">Pedidos</Link></Nav.Link>
+                            <Nav.Link as={NavLink} to="/categorias" className="custom-link">
+                                Categorias
+                            </Nav.Link>
+                            <Nav.Link as={NavLink} to="/produtos" className="custom-link">Produtos</Nav.Link>
+                            <Nav.Link as={NavLink} to="/promocoes" className="custom-link">Promoções</Nav.Link>
+                            <Nav.Link as={NavLink} to="/banner" className="custom-link">Banner</Nav.Link>
+                            <Nav.Link as={NavLink} to="/clientes" className="custom-link">Clientes</Nav.Link>
+                            <Nav.Link as={NavLink} to="/pedidos" className="custom-link">Pedidos</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

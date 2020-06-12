@@ -12,10 +12,10 @@
 }
 
 .custom-link {
-  color: #d2ae6c;
+  color: #d2ae6c !important;
 }
 .custom-link:hover {
-  color: #d2ae6c;
+  color: #d2ae6c !important;
   text-decoration: none;
 }
 

@@ -53,6 +53,7 @@ const Categorys = () => {
                                     <th scope='col' className="table-id">#</th>
                                     <th scope='col' className="table-image">Imagem</th>
                                     <th scope='col' className="table-title">Titulo</th>
+                                    <th scope='col' className="table-qtd">Nº produtos</th>
                                     <th scope='col' className="table-options">Opções</th>
                                 </tr>
                             </thead>
@@ -60,12 +61,13 @@ const Categorys = () => {
                                 {
                                 categorys.length > 0 ?
                                     categorys.map(cat => (
-                                    <tr>
+                                    <tr key={cat.id}>
                                         <th scope="row">{cat.id}</th>
                                         <td>
                                             <img src={cat.image_url} alt={cat.title} width="100%" height="120" />
                                         </td>
                                         <td>{cat.title}</td>
+                                        <td>10</td>
                                         <td className="td-options">
                                             <button type="button" className="btn btn-dark">
                                                 <Link to={`/categorias/${cat.id}`} className="custom-link" >
@@ -80,7 +82,7 @@ const Categorys = () => {
                                     ))
                                 :
                                     <tr>
-                                        <td colSpan={4} scope="row">Nenhuma categoria cadastrada.</td>
+                                        <td colSpan={4}>Nenhuma categoria cadastrada.</td>
                                     </tr>
                                 }
                             </tbody>

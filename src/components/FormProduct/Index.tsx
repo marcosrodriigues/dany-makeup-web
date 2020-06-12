@@ -42,10 +42,11 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
             value, 
             amount, 
             available, 
-            categoria
+            categoria,
+            files
         );
 
-        const form = event.currentTarget;
+        //const form = event.currentTarget;
 
         // if (!form.checkValidity()) {
         //     alert("erro de validação");

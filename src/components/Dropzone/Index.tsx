@@ -6,9 +6,10 @@ import './style.css'
 
 interface Props {
     onFileUploaded: (file: File[]) => void,
-    multiple?: boolean
+    multiple?: boolean,
+    array_image?: string[];
 }
-const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true }) => {
+const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, array_image = [] } ) => {
 
     const MAX_SIZE = 5242880;
     const ACCEPTED_FILES = "image/*"
@@ -53,6 +54,16 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true }) => {
         onFileUploaded(files);  
     }, [files]);
     
+    useEffect(() => {
+        if (multiple) {
+
+        } else {
+            if (array_image[0] !== "")
+                setSelectedUri(array_image[0]);
+        }
+
+    }, [array_image])
+
     const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
         accept: ACCEPTED_FILES,
         onDrop,

@@ -5,7 +5,10 @@
     width: 5%
 }
 .table-image {
-    width: 50%;
+    width: 30%;
+}
+.table-qtd{
+    width: 20%;
 }
 .table-title {
     width: 30%
