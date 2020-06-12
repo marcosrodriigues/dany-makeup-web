@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header/Index';
 
 import './style.css';
@@ -6,8 +6,33 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './style.css';
+import ICategory from '../../interface/ICategory';
+import api from '../../services/api';
+
+import { FaEdit} from 'react-icons/fa';
+import { IoIosCloseCircleOutline } from 'react-icons/io';
 
 const Categorys = () => {
+    const [categorys, setCategorys] = useState<ICategory[]>([]);
+
+    useEffect(() => {
+        reload();
+    }, []);
+
+    function reload() {
+        setCategorys([]);
+        api.get('categorys').then(response => {
+            const categorias = response.data;
+            console.log(categorias);
+            setCategorys(categorias);
+        });
+    }
+
+    async function handleRemoveButton(category_id: number) {
+        await api.delete(`categorys/${category_id}`);
+        reload();
+    }
+
     return (
         <div className="page">
             <Header />
@@ -25,41 +50,41 @@ const Categorys = () => {
                         <table className="table table-dark table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th scope='col'>#</th>
-                                    <th scope='col'>Imagem</th>
-                                    <th scope='col'>Titulo</th>
-                                    <th scope='col'>Opções</th>
+                                    <th scope='col' className="table-id">#</th>
+                                    <th scope='col' className="table-image">Imagem</th>
+                                    <th scope='col' className="table-title">Titulo</th>
+                                    <th scope='col' className="table-options">Opções</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                    <td>Imagem</td>
-                                </tr>
+                                {
+                                categorys.length > 0 ?
+                                    categorys.map(cat => (
+                                    <tr>
+                                        <th scope="row">{cat.id}</th>
+                                        <td>
+                                            <img src={cat.image_url} alt={cat.title} width="100%" height="120" />
+                                        </td>
+                                        <td>{cat.title}</td>
+                                        <td className="td-options">
+                                            <button type="button" className="btn btn-dark">
+                                                <Link to={`/categorias/${cat.id}`} className="custom-link" >
+                                                    <FaEdit size={18} />
+                                                </Link>
+                                            </button>
+                                            <button type="button" onClick={() => handleRemoveButton(cat.id)} className="btn btn-dark custon-link">
+                                                <IoIosCloseCircleOutline className="custom-link" size={24} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    ))
+                                :
+                                    <tr>
+                                        <td colSpan={4} scope="row">Nenhuma categoria cadastrada.</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
-
-                        {/* <nav>
-                            <ul className="pagination justify-content-center dark">
-                                <li className="page-item disabled">
-                                    <a className="page-link" href="/" tabIndex={-1}>Previous</a>
-                                </li>
-                                <li className="page-item"><a className="page-link" href="/">1</a></li>
-                                <li className="page-item"><a className="page-link" href="/">2</a></li>
-                                <li className="page-item"><a className="page-link" href="/">3</a></li>
-                                <li className="page-item">
-                                <a className="page-link" href="/">Next</a>
-                                </li>
-                            </ul>
-                        </nav> */}
                     </div>
                 </div>
             </div>

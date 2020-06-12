@@ -1,0 +1,20 @@
+.box-table {
+    width: 100%;
+}
+.table-id {
+    width: 5%
+}
+.table-image {
+    width: 50%;
+}
+.table-title {
+    width: 30%
+}
+.table-options {
+    width: 15%;
+}
+.td-options {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
