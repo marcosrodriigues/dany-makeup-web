@@ -1,5 +1,6 @@
 export default interface ICategory {
-    id?: number,
+    id: number,
     title: string,
-    image: string,
+    image_url: string,
+    available: boolean
 }

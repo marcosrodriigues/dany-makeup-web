@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 
 import './style.css';
 import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
@@ -30,15 +30,11 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
         }
     }, [product])
 
-    useEffect(() => {
-        console.log(files);
-    }, [files])
-
     function handleDrop(files: File[]) {
         setFiles(files);
     }
 
-    function handleSubmit() {
+    function handleSubmit(event: FormEvent<HTMLFormElement>) {
         console.log(
             name,
             shortDescription,
@@ -48,8 +44,17 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
             available, 
             categoria
         );
+
+        const form = event.currentTarget;
+
+        // if (!form.checkValidity()) {
+        //     alert("erro de validação");
+        //     event.preventDefault();
+        //     event.stopPropagation();
+
+        // }
     }
-    
+
     return (
         <Form onSubmit={handleSubmit}  className="form row">
             <div className="images col-sm-6">
@@ -61,25 +66,37 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
                 <Form.Group as={Row} controlId="name" className="w-100">
                     <Form.Label column sm="4">Nome do produto: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="Nome do produto"></Form.Control>
+                        <Form.Control placeholder="Nome do produto" required
+                            onChange={(event) => setName(event.target.value)} 
+                            value={name} 
+                        />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="shortDescription" className="w-100">
                     <Form.Label column sm="4">Descrição curta: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="Uma descrição curta do produto"></Form.Control>
+                        <Form.Control placeholder="Uma descrição curta do produto"
+                            onChange={(event) => setShortDescription(event.target.value)} 
+                            value={shortDescription} 
+                        />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="fullDescription" className="w-100">
                     <Form.Label column sm="4">Descrição completa: </Form.Label>
                     <Col sm="8">
-                        <Form.Control as="textarea" placeholder="Descrição completa do produto"></Form.Control>
+                        <Form.Control as="textarea" rows={4} placeholder="Descrição completa do produto"
+                            onChange={(event) => setFullDescription(event.target.value)} 
+                            value={fullDescription} 
+                        />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="valor" className="w-100">
                     <Form.Label column sm="4">Valor: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="R$ 39,90"></Form.Control>
+                        <Form.Control placeholder="R$ 39,90" 
+                            onChange={(event) => setValue(Number(event.target.value))} 
+                            value={value} 
+                        />
                     </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="qtd" className="w-100">
@@ -99,7 +116,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
                     </div>
                 </Form.Group>
                 <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" onClick={() => handleSubmit()}>Cadastrar</Button>
+                    <Button variant="dark" className="w-100" type="submit" >Cadastrar</Button>
                 </Form.Group>
             </div>
         </Form>

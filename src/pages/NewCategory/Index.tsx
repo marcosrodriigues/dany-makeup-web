@@ -1,10 +1,10 @@
 import React from 'react';
-import Header from '../../components/Header/Index';
 
 import './style.css';
-import FormProduct from '../../components/FormProduct/Index';
+import Header from '../../components/Header/Index';
+import FormCategory from '../../components/FormCategory/Index';
 
-const NovoProduto = () => {
+const NewCategory = () => {
     return (
         <div className="page">
             <Header />
@@ -13,11 +13,11 @@ const NovoProduto = () => {
                 <div className="content">
                     <div className="row">
                         <div className="header">
-                            <h1 className="header-title">Novo produto</h1>
+                            <h1 className="header-title">Nova categoria</h1>
                         </div>
                     </div>
                     <div className="box-product-horizontal">
-                        <FormProduct />
+                        <FormCategory />
                     </div>
                 </div>
             </div>
@@ -25,4 +25,4 @@ const NovoProduto = () => {
     )
 }
 
-export default NovoProduto;
+export default NewCategory;
