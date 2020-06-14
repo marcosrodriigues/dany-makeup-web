@@ -225,7 +225,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 <Form.Group as={Row} controlId="qtd" className="w-100">
                     <Form.Label column sm="4">Quantidade disponível: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="0"
+                        <Form.Control type="number" placeholder="0"
                             onChange={(event) => setAmount(Number(event.target.value))}
                             value={amount}
                         >
