@@ -7,6 +7,8 @@ import IPropsFormProduct from '../../interface/IPropsFormProduto';
 import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
 import CustomAlert from '../Alert/Index';
+import CurrencyInput from 'react-currency-input';
+
 
 const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefined, images = undefined }) => {
 
@@ -14,8 +16,8 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     const [name, setName] = useState('');
     const [shortDescription, setShortDescription] = useState('');
     const [fullDescription, setFullDescription] = useState('');
-    const [value, setValue] = useState(0.0);    
-    const [amount, setAmount] = useState(0);
+    const [value, setValue] = useState<number>(0.0);    
+    const [amount, setAmount] = useState<number>(0);
     const [available, setAvailable] = useState(false);
     const [productCategorys, setProductCategorys] = useState<number[]>([]);  
     const [files, setFiles] = useState<File[]>([]);  
@@ -79,7 +81,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         setShowError(false);
         setErrors([]);
 
-        let error_msg = [];
+        let error_msg : string[] = [];
 
         if (files.length === 0 && productImages.length === 0) {
             error_msg.push("Insira pelo menos uma imagem.");
@@ -129,7 +131,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     function handleSelect(event: ChangeEvent<HTMLSelectElement>) {
         const options = event.target.options;
 
-        let selectedValues = [];
+        let selectedValues : number[] = [];
 
         for (let i = 0; i < options.length; i++) {
             if (options[i].selected)
@@ -141,6 +143,10 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
 
     function handleSelectMainImage(filename: string) {
         setMainImage(filename);
+    }
+
+    function handleCurrencyInputChange(maskedvalue: string, floatvalue: number, event: ChangeEvent) {
+        setValue(floatvalue);
     }
     return (
         <Form onSubmit={handleSubmit}  className="form row">
@@ -174,7 +180,6 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                         Categorias:
                     </label>
                     <div className="col-sm-8">
-                        <p>{productCategorys}</p>
                         <select className="form-control" 
                             id="categoria" 
                             multiple
@@ -208,9 +213,12 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 <Form.Group as={Row} controlId="valor" className="w-100">
                     <Form.Label column sm="4">Valor: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="R$ 39,90" 
-                            onChange={(event) => setValue(Number(event.target.value))} 
-                            value={value} 
+                        <CurrencyInput 
+                            value={value}
+                            prefix="R$ "
+                            onChange={handleCurrencyInputChange}
+                            className="form-control"
+                            id="valor"
                         />
                     </Col>
                 </Form.Group>
