@@ -7,7 +7,7 @@ export default interface IProduct {
     fullDescription: string,
     value: number,
     amount: number,
-    avalable: boolean,
+    available: boolean,
     categorys: ICategory[],
     mainImage: string,
     images: string[]

@@ -8,9 +8,15 @@ interface Props {
     onFileUploaded: (file: File[]) => void,
     onSelectMainFile?: (filename: string) => void,
     multiple?: boolean,
-    array_image?: string[];
+    array_image?: string[],
+    selected?: string
 }
-const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, onSelectMainFile = () => {}, array_image = [] } ) => {
+const Dropzone:React.FC<Props> = ( { onFileUploaded, 
+                                    multiple = true, 
+                                    onSelectMainFile = () => {}, 
+                                    array_image = [] ,
+                                    selected = ""
+                                } ) => {
 
     const MAX_SIZE = 5242880;
     const ACCEPTED_FILES = "image/*"
@@ -57,7 +63,9 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, onSelectMa
     
     useEffect(() => {
         if (multiple) {
-
+            const images = array_image.map(img => { return img });
+            setSelectedUri(selected);
+            setUrls(images);
         } else {
             if (array_image[0] !== "")
                 setSelectedUri(array_image[0]);
@@ -111,23 +119,46 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded, multiple = true, onSelectMa
                     
                     <div className="list-images row col-sm-12">
                         {
-                        files.length > 0 && files.map((file, index) => {
+                        files.length > 0 ?
+                            files.map((file, index) => {
+                                let className = "each-image col-sm-4 ";
+
+                                if (urls[index] === selectedUri)
+                                    className = className + " selected";
+
+                                return (
+                                    <div 
+                                        onClick={() => handleClickMainImage(urls[index], file.name)}
+                                        key={index}
+                                        className={className}
+                                    >
+                                        <img src={urls[index]} className="image" alt="thumbnail" width="100%" height="100%" />
+                                        <p className="centered">{file.name}</p>
+                                    </div>
+                                )
+                            })
+                        :
+                        urls.length > 0 &&
+                        urls.map((url_image, index) => {
                             let className = "each-image col-sm-4 ";
 
-                            if (urls[index] == selectedUri)
+                            if (url_image === selectedUri)
                                 className = className + " selected";
 
                             return (
                                 <div 
-                                    onClick={() => handleClickMainImage(urls[index], file.name)}
+                                    onClick={() => handleClickMainImage(url_image, url_image)}
                                     key={index}
                                     className={className}
                                 >
-                                    <img src={urls[index]} className="image" alt="thumbnail" width="100%" height="100%" />
-                                    <p className="centered">{file.name}</p>
+                                    <img src={url_image} className="image" alt="thumbnail" width="100%"  />
+                                    <p className="centered" key={index}>
+                                        {String(url_image).substring(String(url_image).lastIndexOf('/') + 1, url_image.length)}
+                                    </p>
                                 </div>
                             )
-                        })}
+                        })
+                        }
                     </div>
                 </div>
             }

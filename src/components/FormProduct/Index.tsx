@@ -1,14 +1,14 @@
 import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 
 import './style.css';
-import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
 import IPropsFormProduct from '../../interface/IPropsFormProduto';
 import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
 import CustomAlert from '../Alert/Index';
 
-const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
+const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefined, images = undefined }) => {
 
     const [id, setId] = useState<number>(0);
     const [name, setName] = useState('');
@@ -17,11 +17,12 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
     const [value, setValue] = useState(0.0);    
     const [amount, setAmount] = useState(0);
     const [available, setAvailable] = useState(false);
-    const [categorias, setCategorias] = useState<number[]>([]);  
+    const [productCategorys, setProductCategorys] = useState<number[]>([]);  
     const [files, setFiles] = useState<File[]>([]);  
     const [mainImage, setMainImage] = useState<string>("");
+    const [productImages, setProductImages] = useState<string[]>([]);
 
-    const [categorys, setCategorys] = useState<ICategory[]> ([]);
+    const [categorias, setCategorias] = useState<ICategory[]> ([]);
     
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
@@ -29,21 +30,36 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
     
     useEffect(() => {
         if (product) {
+            setId(product.id);
             setName(product.name)
             setShortDescription(product.shortDescription);
             setFullDescription(product.fullDescription);
             setValue(product.value);
             setAmount(product.amount);
-            setAvailable(product.avalable);
-            //setCategoria(product.category);
+            setAvailable(product.available);
+            setMainImage(product.mainImage);
         }
-    }, [product])
+        
+        if (categorys) {
+            const ids = categorys.map(cat => {
+                return cat.id;
+            });
+            setProductCategorys(ids);
+        }
+        
+        if (images) {
+            const img_urls = images.map(img => {
+                return img.url || "";
+            })
+            setProductImages(img_urls);
+        }
+    }, [product, categorys, images])
 
     useEffect(() => {
         try {
             api.get('categorys?available=true').then(response => {
                 const { data } = response;
-                setCategorys(data);
+                setCategorias(data);
             })
         } catch (err) {
             alert('Erro ao preencher categorias: ' + err);
@@ -65,7 +81,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
 
         let error_msg = [];
 
-        if (files.length == 0) {
+        if (files.length === 0 && productImages.length === 0) {
             error_msg.push("Insira pelo menos uma imagem.");
             setShowError(true);
         }
@@ -88,11 +104,16 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
         data.append('value', String(value)); 
         data.append('amount', String(amount)); 
         data.append('available', String(available)); 
-        data.append('categorys', categorias.join(','));
+        data.append('categorys', productCategorys.join(','));
         data.append('mainImage', mainImage);
 
-        for(var i = 0; i < files.length; i++)
-            data.append('images[]', files[i]);
+        if(files.length > 0)
+            for(let i = 0; i < files.length; i++)
+                data.append('images[]', files[i]);
+
+        if (productImages)
+            for(let i = 0; i < productImages.length; i++)
+                data.append('url_images[]', productImages[i]);
 
         try {
             if (id !== 0) await api.put('products', data);
@@ -115,7 +136,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
                 selectedValues.push(Number(options[i].value));
         }
     
-        setCategorias(selectedValues);
+        setProductCategorys(selectedValues);
     }
 
     function handleSelectMainImage(filename: string) {
@@ -128,6 +149,8 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
                     <Dropzone 
                         onFileUploaded={handleDrop} 
                         onSelectMainFile={handleSelectMainImage}
+                        array_image={productImages}
+                        selected={mainImage}
                     />
                 </div>
             </div>
@@ -151,8 +174,14 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product }) => {
                         Categorias:
                     </label>
                     <div className="col-sm-8">
-                        <select className="form-control" id="categoria" multiple value={categorias.join(',')} onChange={handleSelect} >
-                            {categorys && categorys.map(cat => (
+                        <p>{productCategorys}</p>
+                        <select className="form-control" 
+                            id="categoria" 
+                            multiple
+                            value={productCategorys ? JSON.stringify(productCategorys) : []}
+                            onChange={handleSelect} 
+                        >
+                            {categorias.map(cat => (
                                 <option key={cat.id} value={cat.id}>{cat.title}</option>
                             ))}
                         </select>

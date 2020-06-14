@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import React, { useState, useEffect, FormEvent } from 'react';
 
 import './style.css';
 import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
@@ -66,10 +66,6 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             setShowError(true);
             setErrors([err]);
         }
-    }
-
-    function handleChangeTitle(event: ChangeEvent<HTMLInputElement>) {
-        setTitle(event.target.value);
     }
 
     return (

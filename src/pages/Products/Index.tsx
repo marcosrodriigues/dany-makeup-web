@@ -6,13 +6,13 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './style.css';
-import IProduct from '../../interface/IProduct';
 import api from '../../services/api';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { FaEdit } from 'react-icons/fa';
+import IPropsFormProduct from '../../interface/IPropsFormProduto';
 
 const Produtos = () => {
-    const [products, setProducts] = useState<IProduct[]>([]);
+    const [products, setProducts] = useState<IPropsFormProduct[]>([]);
 
     useEffect(() => {
         reload();
@@ -21,17 +21,20 @@ const Produtos = () => {
     function reload() {
         api.get('products').then(response => {
             const { data } = response;
+            console.log(data);
             setProducts(data);
         });
     }
 
     useEffect(() => {
-        console.log(products);
+        //console.log(products);
     }, [products])
 
-    async function handleRemoveButton(product_id: number) {
-        await api.delete(`products/${product_id}`);
-        reload();
+    async function handleRemoveButton(product_id: number | undefined) {
+        if (product_id) {
+            await api.delete(`products/${product_id}`);
+            reload();
+        }
     }
 
     return (
@@ -62,31 +65,31 @@ const Produtos = () => {
                             <tbody>
                                 {
                                 products.length > 0 ?
-                                    products.map(product => (
-                                    <tr key={product.id}>
-                                        <th scope="row">{product.id}</th>
+                                    products.map(({ product, categorys }) => (
+                                    <tr key={product?.id}>
+                                        <th scope="row">{product?.id}</th>
                                         <td>
-                                            <img src={product.mainImage} alt={product.name} width="100%" height="120" />
+                                            <img src={product?.mainImage} alt={product?.name} width="100%" height="120" />
                                         </td>
-                                        <td>{product.name}</td>
+                                        <td>{product?.name}</td>
                                         <td>
-                                            {product.categorys.map(cat => cat.title).join(', ')}
+                                            {   categorys?.map(cat => cat.title).join(', ')}
                                         </td>
-                                        <td>R$ {product.value}</td>
+                                        <td>R$ {product?.value}</td>
                                         <td className="td-options">
                                             <button type="button" className="btn btn-dark">
-                                                <Link to={`/produtos/${product.id}`} className="custom-link" >
+                                                <Link to={`/produtos/${product?.id}`} className="custom-link" >
                                                     <FaEdit size={18} />
                                                 </Link>
                                             </button>
-                                            <button type="button" onClick={() => handleRemoveButton(product.id)} className="btn btn-dark custon-link">
+                                            <button type="button" onClick={() => handleRemoveButton(product?.id)} className="btn btn-dark custon-link">
                                                 <IoIosCloseCircleOutline className="custom-link" size={24} />
                                             </button>
                                         </td>
                                     </tr>
                                     ))
                                 :
-                                    <tr>
+                                    <tr key="no-product">
                                         <td colSpan={6} className="centered">Nenhum produto cadastrado.</td>
                                     </tr>
                                 }

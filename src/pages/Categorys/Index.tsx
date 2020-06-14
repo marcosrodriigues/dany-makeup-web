@@ -23,7 +23,6 @@ const Categorys = () => {
         setCategorys([]);
         api.get('categorys').then(response => {
             const categorias = response.data;
-            console.log(categorias);
             setCategorys(categorias);
         });
     }
