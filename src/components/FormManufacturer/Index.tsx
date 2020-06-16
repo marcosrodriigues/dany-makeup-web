@@ -1,18 +1,18 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 
 import './style.css';
-import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
-import IPropsFormCategory from '../../interface/IPropsFormCategory';
 import api from '../../services/api';
 import CustomAlert from '../Alert/Index';
+import IPropsFormManufacturer from '../../interface/IPropsFormManufacturer';
 
-const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
+const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) => {
 
-    const [title, setTitle] = useState<string>("");
-    const [imageUrl, setImageUrl] = useState<string>("");
     const [id, setId] = useState<number>(0);
-    const [available, setAvailable] = useState<boolean>(false);
+    const [name, setName] = useState<string>("");
+    const [imageUrl, setImageUrl] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
     
     const [file, setFile] = useState<File>({} as File);  
 
@@ -21,13 +21,13 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     const [errors, setErrors] = useState<string[]>([]);
     
     useEffect(() => {
-        if (category) {
-            setTitle(category.title);
-            setImageUrl(category.image_url);
-            setId(category.id);
-            setAvailable(category.available);
+        if (manufacturer) {
+            setId(manufacturer.id);
+            setName(manufacturer.name);
+            setImageUrl(manufacturer.image_url);
+            setDescription(manufacturer.description);
         }
-    }, [category]);
+    }, [manufacturer]);
 
     function handleDrop(selectedFile: File[]) {
         setFile(selectedFile[0]);
@@ -40,24 +40,32 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
         setShowSucess(false);
         setShowError(false);
         setErrors([]);
+        let errors : string[] = [];
 
-        if (!file && imageUrl === "") {
-            setErrors(["Insira uma imagem."]);
+        if (name === "") errors.push("Campo 'nome' é obrigatório.");
+        if (description === "") errors.push("Campo 'descrição' é obrigatório.");
+        if (imageUrl === "") {
+            if (file && file.name === "") {
+                errors.push("Adicione uma imagem ao fabricante.");
+            }
+        } 
+
+        if (errors.length > 0) {
             setShowError(true);
+            setErrors(errors);
             return;
         }
 
         const data = new FormData();
 
         data.append('id', String(id));
-        data.append("title", title);
-        data.append('available', String(available));
-        
+        data.append('name', name);
+        data.append('description', description);
         data.append('image', file);
 
         try {
-            if (id !== 0) await api.put('categorys', data)
-            else await api.post('categorys', data);
+            if (id !== 0) await api.put('manufacturers', data)
+            else await api.post('manufacturers', data);
 
             setShowSucess(true);
         } catch (err) {
@@ -85,25 +93,22 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                 </div>
 
                 <Form.Group as={Row} controlId="name" className="w-100">
-                    <Form.Label column sm="4">Título da categoria: </Form.Label>
+                    <Form.Label column sm="4">Nome do fabricante: </Form.Label>
                     <Col sm="8">
-                        <Form.Control placeholder="Título da categoria" required
-                            onChange={(event) => setTitle(event.target.value)} 
-                            value={title} 
+                        <Form.Control placeholder="Nome do fabricante" required
+                            onChange={(event) => setName(event.target.value)} 
+                            value={name} 
                         />
                     </Col>
                 </Form.Group>
-                <Form.Group as={Row} className="w-100">
-                    <div className="col-sm-4"></div>
-                    <div className="col-sm-8">
-                        <Form.Check id="disponivel" type="checkbox">
-                            <FormCheck.Input
-                                onChange={() => setAvailable(!available)}
-                                checked={available} 
-                            />
-                            <Form.Check.Label>Categoria disponível</Form.Check.Label>
-                        </Form.Check>
-                    </div>
+                <Form.Group as={Row} controlId="description" className="w-100">
+                    <Form.Label column sm="4">Descrição: </Form.Label>
+                    <Col sm="8">
+                        <Form.Control as="textarea" rows={5} placeholder="Descrição do fabricante" required
+                            onChange={(event) => setDescription(event.target.value)} 
+                            value={description} 
+                        />
+                    </Col>
                 </Form.Group>
                 <Form.Group as={Row} controlId="button" className="w-100">
                     <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
@@ -113,4 +118,4 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     )
 }
 
-export default FormCategory;
+export default FormManufacturer;

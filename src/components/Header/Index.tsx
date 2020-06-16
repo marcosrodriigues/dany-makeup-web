@@ -13,9 +13,8 @@ const Header = () => {
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                         <Nav className="custom-nav">
-                            <Nav.Link as={NavLink} to="/categorias" className="custom-link">
-                                Categorias
-                            </Nav.Link>
+                            <Nav.Link as={NavLink} to="/fabricantes" className="custom-link">Fabricantes</Nav.Link>
+                            <Nav.Link as={NavLink} to="/categorias" className="custom-link">Categorias</Nav.Link>
                             <Nav.Link as={NavLink} to="/produtos" className="custom-link">Produtos</Nav.Link>
                             <Nav.Link as={NavLink} to="/promocoes" className="custom-link">Promoções</Nav.Link>
                             <Nav.Link as={NavLink} to="/banner" className="custom-link">Banner</Nav.Link>

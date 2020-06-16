@@ -1,0 +1,27 @@
+.table-col-0 {
+    width: 5%;
+}
+.table-col-1 {
+    width: 15%;
+}
+.table-col-2 {
+    width: 25%;
+}
+.table-col-3 {
+    width: 20%;
+}
+.table-col-4 {
+    width: 20%;
+}
+.table-options {
+    width: 15%;
+}
+
+.td-options {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.centered {
+    text-align: center;
+}

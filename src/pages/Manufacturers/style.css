@@ -1,5 +1,8 @@
 .content {
     margin-top: 24px;
+    justify-content: space-between;
+    flex-direction: column;
+    display: flex;
 }
 
 .header {
@@ -7,8 +10,30 @@
     justify-content: space-around;
 }
 
+.text-gold {
+    color : #d2ae6c;
+}
+
+.text-filter {
+    font-size: 24px;
+}
+.bg-gold {
+    background-color: #d2ae6c !important;
+}
+
+.box-filter {
+    padding: 10px;
+    width: 100%;
+    justify-content: space-around;
+    margin-bottom: 16px;
+}
+
 .header-title {
     float: left;
+}
+
+.ml16 {
+    margin-left: 16px;
 }
 
 .search {
@@ -22,7 +47,7 @@
     width: 5%;
 }
 .table-image {
-    width: 15%;
+    width: 25%;
 }
 .table-title {
     width: 15%;
@@ -43,4 +68,15 @@
 }
 .centered {
     text-align: center;
+}
+.right {
+    text-align: right;;
+}
+
+.form-control {
+    width: 100% !important;
+}
+
+.ml-0 {
+    margin-left: 0
 }
