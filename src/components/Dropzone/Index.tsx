@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiXCircle } from 'react-icons/fi';
 
 import './style.css'
 
@@ -29,6 +29,7 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
     const onDrop = useCallback(async (accepted:File[]) => {
         accepted.map((each:File) => {
             const fileUrl = URL.createObjectURL(each);
+
 
             if (multiple) {
                 files.push(each);
@@ -86,6 +87,17 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
         onSelectMainFile(selectedFileName);
     }
 
+    function getFilename(url : string) {
+        if (url.startsWith("http")) {
+            return String(url).substring(String(url).lastIndexOf('/') + 1, url.length) 
+        }
+        return url;
+    }
+
+    function handleRemoveFile(url: string) {
+        console.log("removendo arquivo " + url)
+    }
+
     const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > MAX_SIZE;
 
     return (
@@ -103,7 +115,7 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
                             {!isDragActive && 'Clique ou arraste as imagens aqui'}
                             {isDragActive && !isDragReject && "Solte a imagem."}
                             {isDragReject && "Tipo de arquivo não permitido!"}
-                            {isFileTooLarge && "Arquivo é muito pesado!"}
+                            {isFileTooLarge && "Arquivo é muito pesado, tamanho máximo permitido: 500kb"}
                         </>
                     }
                 </p>
@@ -119,7 +131,34 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
                     
                     <div className="list-images row col-sm-12">
                         {
-                        files.length > 0 ?
+                        urls.length > 0 ?
+                            urls.map((url_image, index) => {
+                                let className = "each-box col-sm-4 ";
+    
+                                if (url_image === selectedUri)
+                                    className = className + " selected";
+    
+                                return (
+                                    <div 
+                                        key={index}
+                                        className={className}
+                                    >
+                                        <button type="button" onClick={() => handleRemoveFile(url_image)} className="btn-remove">
+                                            <FiXCircle size={24} title="Remover imagem"  />
+                                        </button>
+                                        
+                                        <div className="each-image" onClick={() => handleClickMainImage(url_image, getFilename(url_image))}>
+                                            <img src={url_image} className="image" alt="thumbnail" width="100%"  />
+                                            <p className="centered" key={index}>
+                                                {getFilename(url_image)}
+                                            </p>
+                                        </div>
+                                        
+                                    </div>
+                                )
+                            })
+                            :
+                        files.length > 0 &&
                             files.map((file, index) => {
                                 let className = "each-image col-sm-4 ";
 
@@ -137,27 +176,6 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
                                     </div>
                                 )
                             })
-                        :
-                        urls.length > 0 &&
-                        urls.map((url_image, index) => {
-                            let className = "each-image col-sm-4 ";
-
-                            if (url_image === selectedUri)
-                                className = className + " selected";
-
-                            return (
-                                <div 
-                                    onClick={() => handleClickMainImage(url_image, url_image)}
-                                    key={index}
-                                    className={className}
-                                >
-                                    <img src={url_image} className="image" alt="thumbnail" width="100%"  />
-                                    <p className="centered" key={index}>
-                                        {String(url_image).substring(String(url_image).lastIndexOf('/') + 1, url_image.length)}
-                                    </p>
-                                </div>
-                            )
-                        })
                         }
                     </div>
                 </div>

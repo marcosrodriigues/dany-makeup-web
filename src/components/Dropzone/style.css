@@ -52,7 +52,7 @@
     width: 100%;
 }
 
-.each-image {
+.each-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -60,6 +60,24 @@
     border-radius: .25rem;
     margin-top: 16px;
     margin-bottom: 16px;
+    width: 100%;
+    height: 100%;
+}
+.each-box .btn-remove {
+    position: absolute;
+    right: 16px;
+    top: 0;
+    background-color:transparent;
+    color: red;
+    cursor: pointer;
+    border: 0;
+}
+
+.btn-remove svg {
+    vertical-align: top;
+}
+
+.each-image {
     width: 100%;
     height: 100%;
 }
