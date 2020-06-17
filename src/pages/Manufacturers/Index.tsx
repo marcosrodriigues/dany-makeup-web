@@ -15,7 +15,6 @@ import BoxFilter from '../../components/BoxFilter/Index';
 
 const Manufacturers = () => {
     const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
-    const [searchNome, setSearchNome] = useState<string>("");
 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [limitPerPage, setLimitPerPage] = useState<number>(5);
@@ -30,7 +29,7 @@ const Manufacturers = () => {
 
     useEffect(() => {
         init();
-    }, [searchNome, currentPage, limitPerPage]);
+    }, [currentPage, limitPerPage]);
 
     useEffect(() => {
         console.log(currentPage)
@@ -38,7 +37,7 @@ const Manufacturers = () => {
 
     async function init() {
         const params = {
-            name: searchNome,
+            name: inputSearch,
             page: currentPage,
             limit: limitPerPage
         };
@@ -83,7 +82,7 @@ const Manufacturers = () => {
 
     function handleSubmitFilterForm(event) {
         event.preventDefault();
-        setSearchNome(inputSearch);
+        init();
     }
 
     function handleChangeLimitPerPage(event) {

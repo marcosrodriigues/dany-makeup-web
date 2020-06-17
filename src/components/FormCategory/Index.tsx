@@ -10,6 +10,7 @@ import CustomAlert from '../CustomAlert/Index';
 const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 
     const [title, setTitle] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
     const [imageUrl, setImageUrl] = useState<string>("");
     const [id, setId] = useState<number>(0);
     const [available, setAvailable] = useState<boolean>(false);
@@ -51,6 +52,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 
         data.append('id', String(id));
         data.append("title", title);
+        data.append("description", description);
         data.append('available', String(available));
         
         data.append('image', file);
@@ -90,6 +92,15 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                         <Form.Control placeholder="Título da categoria" required
                             onChange={(event) => setTitle(event.target.value)} 
                             value={title} 
+                        />
+                    </Col>
+                </Form.Group>
+                <Form.Group as={Row} controlId="description" className="w-100">
+                    <Form.Label column sm="4">Descrição: </Form.Label>
+                    <Col sm="8">
+                        <Form.Control as="textarea" rows={5} placeholder="Descrição da categoria" required
+                            onChange={(event) => setDescription(event.target.value)} 
+                            value={description} 
                         />
                     </Col>
                 </Form.Group>
