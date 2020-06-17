@@ -5,7 +5,7 @@ import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
 import IPropsFormCategory from '../../interface/IPropsFormCategory';
 import api from '../../services/api';
-import CustomAlert from '../Alert/Index';
+import CustomAlert from '../CustomAlert/Index';
 
 const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 

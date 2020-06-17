@@ -1,0 +1,20 @@
+.right {
+    text-align: right;;
+}
+
+.form-control {
+    width: 100% !important;
+}
+
+.ml-0 {
+    margin-left: 0
+}
+
+.filter-input {
+    color: black !important;
+}
+
+
+.filter-input::placeholder {
+    color: black !important;
+}

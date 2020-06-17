@@ -5,8 +5,46 @@ import './style.css'
 import { Link } from 'react-router-dom';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { FaEdit } from 'react-icons/fa';
+import api from '../../services/api';
 
-const CustomTable = ({ headers, array , route = "", paginationProps }) => {
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css';
+import ConfirmAlert from '../ConfirmAlert/Index';
+
+const CustomTable = ({ headers, array , route = "", routeApi = "", paginationProps, onRemove = () => { } }) => {
+    
+    
+    async function handleRemoveClick(id: number, name: string = "") {
+        if (id === 0 || route === "") return;
+
+        confirmAlert({
+            customUI: ({ onClose }) =>  {
+                console.log(onClose);
+                return (
+                    <ConfirmAlert
+                        title={"Remover fabricante"}
+                        message={`Deseja confirmar a exclusão do fabricante?`}
+                        name={name}
+                        onClose={onClose}
+                        onClickYes={() => {
+                            handleDelete(id);
+                            onClose();
+                        }}
+                    />
+                )
+            }
+        })
+    }
+
+    async function handleDelete(id) {
+        try {
+            await api.delete(`${routeApi}/${id}`);
+        } catch (err) {
+            console.log(err);
+        }
+        onRemove();
+    }
+
     return (
         <table className="table table-dark table-striped table-hover">
             <thead>
@@ -39,7 +77,7 @@ const CustomTable = ({ headers, array , route = "", paginationProps }) => {
                                     <FaEdit size={18} />
                                 </Link>
                             </button>
-                            <button type="button" onClick={() => console.log("removeu " + route + " - " + data.id)} className="btn btn-dark custon-link">
+                            <button type="button" onClick={() => handleRemoveClick(data.id, data.name)} className="btn btn-dark custon-link">
                                 <IoIosCloseCircleOutline className="custom-link" size={24} />
                             </button>
                         </td>

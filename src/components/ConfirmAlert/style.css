@@ -1,0 +1,61 @@
+.confirm-container {
+    background: rgba(210, 174, 108, 1) !important;
+    width: 460px;
+    justify-content: center;
+    border-radius: 15px;
+    display: flex;
+}
+
+.confirm-modal {
+    width: 100%;
+    border-radius: 15px;
+    padding: 8px;
+    border: 1px solid white;
+    flex-direction: column;
+}
+
+.confirm-text-title .span-exit {
+    float: right;
+    padding-right: 16px;
+}
+
+.confirm-box-title {
+    border-bottom: 1px solid;
+    border-color: rgba(0, 0, 0, 0.2);
+    align-self: flex-start;
+    align-items: center;
+}
+
+.confirm-text-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.confirm-box-message {
+    margin-top:16px;
+    align-self: center;
+}
+
+.float-right {
+    float: right;
+}
+
+.confirm-box-buttons {
+    width: 100%;
+    padding-top: 8px;
+    margin-bottom: 8px;
+    border-top: 1px solid;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.confirm-box-buttons button {
+    margin-left: 8px;
+}
+
+.react-confirm-alert-overlay {
+    background: rgba(0, 0, 0, 0.5) !important;
+}
+.confirm-button-span{ 
+    background-color: transparent;
+    border: 0;
+}

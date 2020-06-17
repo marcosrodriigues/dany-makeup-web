@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 
 import './style.css';
 import api from '../../services/api';
-import { FaSearch } from 'react-icons/fa';
 import IManufacturer from '../../interface/IManufacturer';
 
 import CustomTable from '../../components/CustomTable/Index';
 import IDataTableManufacturer from '../../interface/IDataTableManufacturers';
+import BoxFilter from '../../components/BoxFilter/Index';
 
 const Manufacturers = () => {
     const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
@@ -28,6 +28,10 @@ const Manufacturers = () => {
     const [dataTable, setDataTable] = useState<IDataTableManufacturer[]>([]);
 
     useEffect(() => {
+        init();
+    }, [searchNome, currentPage, limitPerPage]);
+
+    async function init() {
         const params = {
             name: searchNome,
             page: currentPage,
@@ -41,7 +45,7 @@ const Manufacturers = () => {
             setCount(Number(response.headers["x-total-count"]));
             setOffset(limitPerPage * (currentPage - 1));
         })
-    }, [searchNome, currentPage, limitPerPage]);
+    }
 
     useEffect(() => {
         setStart(offset + 1)
@@ -52,14 +56,15 @@ const Manufacturers = () => {
         let tables : IDataTableManufacturer[] = [];
 
         manufacturers.map(manufacturer => {
+            let qtd_produtos = manufacturer.qtd_produtos ? manufacturer.qtd_produtos : 0;
             const n : IDataTableManufacturer = {
                 id: manufacturer.id,
                 image_url: manufacturer.image_url,
                 name: manufacturer.name,
-                qtd_produtos: 40,
+                qtd_produtos: qtd_produtos
             };
             tables.push(n);
-            return;
+            return manufacturer;
         })
 
         setDataTable(tables);
@@ -70,12 +75,11 @@ const Manufacturers = () => {
         setSearchNome(inputSearch);
     }
 
-    function handleChangeSelect(event) {
+    function handleChangeLimitPerPage(event) {
         setLimitPerPage(Number(event.target.value));
     }
 
     function handlePageClick(page: number) {
-        console.log(page);
         setCurrentPage(page);
     }
 
@@ -93,41 +97,16 @@ const Manufacturers = () => {
                     </div>
                     
                     <div className="box-filter bg-dark">
-                        <fieldset>
-                            <form onSubmit={handleSubmitFilterForm} className="form-inline centered">
-                                <div className="centered w-100 row ml-0">
-                                    <div className="col-sm-2">
-                                        <span className="text-filter text-gold">Filtre por:</span>
-                                    </div>
-                                    <div className="col-sm-6">
-                                        <input 
-                                            id="name" 
-                                            placeholder="Nome" 
-                                            className="form-control bg-gold"
-                                            onChange={event => setInputSearch(event.target.value)}
-                                            value={inputSearch} />
-
-                                    </div>
-                                    <div className="col-sm-3">
-                                        <select className="form-control bg-gold" value={limitPerPage} onChange={handleChangeSelect}>
-                                            <option disabled>Exibir de:</option>
-                                            <option value={5}>Exibir de 5 e 5</option>
-                                            <option value={10}>Exibir de 10 em 10</option>
-                                            <option value={15}>Exibir de 15 em 15</option>
-                                            <option value={20}>Exibir de 20 em 20</option>
-                                            <option value={25}>Exibir de 25 em 25</option>
-                                            <option value={50}>Exibir de 50 em 50</option>
-                                        </select>
-                                    </div>
-                                    <div className="col-sm-1">
-                                        <button type="submit" className="btn btn-dark right">
-                                            <FaSearch></FaSearch>
-                                        </button>
-                                    </div>
-                                    
-                                </div>
-                            </form>
-                        </fieldset>
+                        <BoxFilter
+                            limitPerPage={limitPerPage}
+                            onChangeLimitPerPage={handleChangeLimitPerPage}
+                            onSubmit={handleSubmitFilterForm}
+                            fieldProps={[{
+                                name: 'name',
+                                value: inputSearch,
+                                setValue: setInputSearch
+                            }]}
+                        />
                     </div>
 
                     <p className="right">
@@ -139,6 +118,8 @@ const Manufacturers = () => {
                             headers={["#", "Imagem", "Fabricante", "Nº Produtos"]}
                             array={dataTable}
                             route="fabricantes"
+                            routeApi="manufacturers"
+                            onRemove={init}
                             paginationProps={{ click: handlePageClick, offset, limitPerPage, currentPage, count}}
                         />
                     </div>

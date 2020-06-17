@@ -6,7 +6,7 @@ import Dropzone from '../Dropzone/Index';
 import IPropsFormProduct from '../../interface/IPropsFormProduto';
 import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
-import CustomAlert from '../Alert/Index';
+import CustomAlert from '../CustomAlert/Index';
 import CurrencyInput from 'react-currency-input';
 
 

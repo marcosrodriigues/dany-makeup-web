@@ -4,7 +4,7 @@ import './style.css';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
 import api from '../../services/api';
-import CustomAlert from '../Alert/Index';
+import CustomAlert from '../CustomAlert/Index';
 import IPropsFormManufacturer from '../../interface/IPropsFormManufacturer';
 
 const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) => {
