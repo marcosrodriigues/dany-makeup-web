@@ -130,7 +130,13 @@ const Manufacturers = () => {
                             route="fabricantes"
                             routeApi="manufacturers"
                             onRemove={init}
-                            paginationProps={{ click: handlePageClick, offset, limitPerPage, currentPage, count}}
+                            paginationProps={{ 
+                                click: handlePageClick, 
+                                offset, 
+                                limitPerPage, 
+                                currentPage, 
+                                count
+                            }}
                         />
                     </div>
                 </div>
