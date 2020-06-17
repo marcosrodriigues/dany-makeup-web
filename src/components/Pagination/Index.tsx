@@ -11,31 +11,33 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
 
     useEffect(() => {
         setCurrentPage(initialPage)
-    }, [])
+    }, [initialPage])
 
     useEffect(() => {
         setCountPages(Math.ceil(totalRecords / perPage));
     }, [totalRecords, perPage]);
 
-    function handleClick(page: number) {
-        if (page < 1 || page > countPages) return;
-        setCurrentPage(page);
-        pageClick(page);
-    }
-
     useEffect(() => {
-        setIsNextEnable(currentPage !== countPages);
-        setIsBeforeEnable(currentPage !== 1)
-    }, [currentPage, countPages])
+        if (currentPage > countPages)
+            setCurrentPage(countPages);
 
-    useEffect(() => {
-        
         let count_pages: number[] = [];
         for (let i: number = 0; i < countPages; i++)
             count_pages.push(i + 1);
         
         setListPages(count_pages);
     }, [countPages])
+
+    useEffect(() => {
+        setIsNextEnable(currentPage !== countPages);
+        setIsBeforeEnable(currentPage !== 1)
+    }, [currentPage, countPages])
+
+    function handleClick(page: number) {
+        if (page < 1 || page > countPages) return;
+        setCurrentPage(page);
+        pageClick(page);
+    }
 
     return (
         <nav className="bg-dark">

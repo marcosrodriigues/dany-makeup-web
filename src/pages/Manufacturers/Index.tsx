@@ -16,6 +16,7 @@ import BoxFilter from '../../components/BoxFilter/Index';
 const Manufacturers = () => {
     const [manufacturers, setManufacturers] = useState<IManufacturer[]>([]);
     const [searchNome, setSearchNome] = useState<string>("");
+
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [limitPerPage, setLimitPerPage] = useState<number>(5);
     const [count, setCount] = useState<number>(0);
@@ -51,6 +52,10 @@ const Manufacturers = () => {
         setStart(offset + 1)
         setEnd(offset + limitPerPage < count ? offset + limitPerPage : count);
     }, [offset, limitPerPage, count])
+
+    useEffect(() => {
+        setCurrentPage(Math.ceil(count / limitPerPage));
+    }, [limitPerPage])
 
     useEffect(() => {
         let tables : IDataTableManufacturer[] = [];
