@@ -113,7 +113,7 @@ const Manufacturers = () => {
                             onChangeLimitPerPage={handleChangeLimitPerPage}
                             onSubmit={handleSubmitFilterForm}
                             fieldProps={[{
-                                name: 'name',
+                                name: 'Nome',
                                 value: inputSearch,
                                 setValue: setInputSearch
                             }]}
