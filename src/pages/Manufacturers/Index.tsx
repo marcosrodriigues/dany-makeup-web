@@ -32,6 +32,10 @@ const Manufacturers = () => {
         init();
     }, [searchNome, currentPage, limitPerPage]);
 
+    useEffect(() => {
+        console.log(currentPage)
+    }, [currentPage])
+
     async function init() {
         const params = {
             name: searchNome,
@@ -54,7 +58,9 @@ const Manufacturers = () => {
     }, [offset, limitPerPage, count])
 
     useEffect(() => {
-        setCurrentPage(Math.ceil(count / limitPerPage));
+        let nPages = Math.ceil(count / limitPerPage);
+        let newCurrentPage = (currentPage > nPages && nPages > 0) ? nPages  : currentPage
+        setCurrentPage(newCurrentPage);
     }, [limitPerPage])
 
     useEffect(() => {

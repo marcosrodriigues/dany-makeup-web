@@ -9,27 +9,100 @@ import './style.css';
 import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
 
-import { FaEdit} from 'react-icons/fa';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
+import BoxFilter from '../../components/BoxFilter/Index';
+import CustomTable from '../../components/CustomTable/Index';
 
 const Categorys = () => {
     const [categorys, setCategorys] = useState<ICategory[]>([]);
 
-    useEffect(() => {
-        reload();
-    }, []);
+    const [searchTitle, setSearchTitle] = useState("");
 
-    function reload() {
-        setCategorys([]);
-        api.get('categorys').then(response => {
-            const categorias = response.data;
-            setCategorys(categorias);
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        limitPerPage: 5,
+        count: 0,
+        offset: 0,
+        start: 0,
+        end: 0
+    });
+
+    const [dataTable, setDataTable] = useState<{ id, image_url, name, qtd_produtos }[]>([]);
+
+    useEffect(() => {
+        init();
+    }, [pagination.currentPage, pagination.limitPerPage]);
+
+    useEffect(() => {
+        setPagination({
+            ...pagination,
+            start: pagination.offset + 1,
+            end: pagination.offset + pagination.limitPerPage < pagination.count ? pagination.offset + pagination.limitPerPage : pagination.count
+        })
+    }, [pagination.offset, pagination.limitPerPage, pagination.count])
+
+    useEffect(() => {
+        let current = Math.ceil(pagination.count / pagination.limitPerPage);
+        if (current < 1) current = 1;
+        setPagination({
+            ...pagination,
+            currentPage: current
+        })
+    }, [pagination.limitPerPage])
+
+    useEffect(() => {
+        let tables : any = [];
+
+        console.log(categorys);
+        categorys && categorys.map(category => {
+            let qtd_produtos = category.qtd_produtos ? category.qtd_produtos : 0;
+            const n = {
+                id: category.id,
+                image_url: category.image_url,
+                name: category.title,
+                qtd_produtos: qtd_produtos
+            };
+            tables.push(n);
+            return category;
+        })
+
+        setDataTable(tables);
+    }, [categorys])
+
+    async function init() {
+        const params = {
+            title: searchTitle,
+            page: pagination.currentPage,
+            limit: pagination.limitPerPage
+        }
+
+        const response = await api.get('categorys', { params })
+        const categorias = response.data;
+
+        setCategorys(categorias);
+        setPagination({
+            ...pagination,
+            count: Number(response.headers['x-total-count']),
+            offset: (pagination.limitPerPage * (pagination.currentPage - 1))
         });
     }
 
-    async function handleRemoveButton(category_id: number) {
-        await api.delete(`categorys/${category_id}`);
-        reload();
+    function handleSubmitFilterForm(event) {
+        event.preventDefault();
+        init();
+    }
+
+    function handleChangeLimitPerPage(event) {
+        setPagination({
+            ...pagination, 
+            limitPerPage: Number(event.target.value)
+        });
+    }
+
+    function handlePageClick(page: number) {
+        setPagination({
+            ...pagination, 
+            currentPage: page
+        });
     }
 
     return (
@@ -45,48 +118,39 @@ const Categorys = () => {
                         </div>
                     </div>
 
-                    <div className="box-table table-responsive">
-                        <table className="table table-dark table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th scope='col' className="table-id">#</th>
-                                    <th scope='col' className="table-image">Imagem</th>
-                                    <th scope='col' className="table-title">Titulo</th>
-                                    <th scope='col' className="table-qtd">Nº produtos</th>
-                                    <th scope='col' className="table-options">Opções</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                categorys.length > 0 ?
-                                    categorys.map(cat => (
-                                    <tr key={cat.id}>
-                                        <th scope="row">{cat.id}</th>
-                                        <td>
-                                            <img src={cat.image_url} alt={cat.title} width="100%" height="120" />
-                                        </td>
-                                        <td>{cat.title}</td>
-                                        <td>10</td>
-                                        <td className="td-options">
-                                            <button type="button" className="btn btn-dark">
-                                                <Link to={`/categorias/${cat.id}`} className="custom-link" >
-                                                    <FaEdit size={18} />
-                                                </Link>
-                                            </button>
-                                            <button type="button" onClick={() => handleRemoveButton(cat.id)} className="btn btn-dark custon-link">
-                                                <IoIosCloseCircleOutline className="custom-link" size={24} />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    ))
-                                :
-                                    <tr>
-                                        <td colSpan={5} className="centered">Nenhuma categoria cadastrada.</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+                    <div className="box-filter bg-dark">
+                        <BoxFilter
+                            limitPerPage={pagination.limitPerPage}
+                            onChangeLimitPerPage={handleChangeLimitPerPage}
+                            onSubmit={handleSubmitFilterForm}
+                            fieldProps={[{
+                                name: 'Título',
+                                value: searchTitle,
+                                setValue: setSearchTitle
+                            }]}
+                        />
                     </div>
+
+                    <p className="right">
+                        Exibindo de {pagination.start} até {pagination.end} de {pagination.count} registros no total.
+                    </p>
+
+                    <div className="box-table table-responsive">
+                        <CustomTable
+                            headers={["#", "Imagem", "Título", "Nº Produtos"]}
+                            array={dataTable}
+                            route="categorias"
+                            routeApi="categorys"
+                            onRemove={init}
+                            paginationProps={{ 
+                                click: handlePageClick, 
+                                offset: pagination.offset, 
+                                limitPerPage: pagination.limitPerPage,
+                                currentPage: pagination.currentPage,
+                                count: pagination.count}}
+                        />
+                    </div>
+
                 </div>
             </div>
         </div>

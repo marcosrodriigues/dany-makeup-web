@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './style.css';
 
 const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 }) => {
-    const [currentPage, setCurrentPage] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [countPages, setCountPages] = useState(1);
     const [listPages, setListPages] = useState<number[]>([]);
     const [isBeforeEnable, setIsBeforeEnable] = useState(false);
@@ -18,9 +18,6 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
     }, [totalRecords, perPage]);
 
     useEffect(() => {
-        if (currentPage > countPages)
-            setCurrentPage(countPages);
-
         let count_pages: number[] = [];
         for (let i: number = 0; i < countPages; i++)
             count_pages.push(i + 1);
@@ -38,7 +35,6 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
         setCurrentPage(page);
         pageClick(page);
     }
-
     return (
         <nav className="bg-dark">
             <ul className="paginator justify-content-center bg-dark">

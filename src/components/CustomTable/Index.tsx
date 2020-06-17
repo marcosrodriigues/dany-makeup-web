@@ -17,13 +17,16 @@ const CustomTable = ({ headers, array , route = "", routeApi = "", paginationPro
     async function handleRemoveClick(id: number, name: string = "") {
         if (id === 0 || route === "") return;
 
+        const title = "Remover registro"
+        const message = "Deseja confirmar a exclusão do registro " + name + "?";
+
         confirmAlert({
             customUI: ({ onClose }) =>  {
                 console.log(onClose);
                 return (
                     <ConfirmAlert
-                        title={"Remover fabricante"}
-                        message={`Deseja confirmar a exclusão do fabricante?`}
+                        title={title}
+                        message={message}
                         name={name}
                         onClose={onClose}
                         onClickYes={() => {
@@ -94,12 +97,15 @@ const CustomTable = ({ headers, array , route = "", routeApi = "", paginationPro
             <tfoot>
                 <tr>
                     <td colSpan={headers.length + 1}>
-                        <Pagination 
-                            pageClick={paginationProps.click} 
-                            initialPage={paginationProps.currentPage}
-                            totalRecords={paginationProps.count}
-                            perPage={paginationProps.limitPerPage}
-                        />
+                        {
+                            <Pagination 
+                                pageClick={paginationProps.click} 
+                                initialPage={paginationProps.currentPage}
+                                totalRecords={paginationProps.count}
+                                perPage={paginationProps.limitPerPage}
+                            />
+                        }
+                        
                     </td>
                 </tr>
             </tfoot>

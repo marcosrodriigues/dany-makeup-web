@@ -22,8 +22,8 @@ const BoxFilter = ({ limitPerPage = 5, onChangeLimitPerPage, onSubmit, fieldProp
                                 return (
                             <input 
                                 key={index}
-                                id="name" 
-                                placeholder="Nome" 
+                                id={item.name} 
+                                placeholder={item.name} 
                                 className="form-control bg-gold filter-input"
                                 onChange={event => item.setValue(event.target.value)}
                                 value={item.value} 
