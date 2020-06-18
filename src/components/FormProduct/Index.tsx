@@ -44,6 +44,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             setAmount(product.amount);
             setAvailable(product.available);
             setMainImage(product.mainImage);
+            setProductManufacturer(product.manufacturer_id);
         }
         
         if (categorys) {
@@ -52,12 +53,9 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             });
             setProductCategorys(ids);
         }
-
         
         if (images) {
-            const img_urls = images.map(img => {
-                return img.url || "";
-            })
+            const img_urls = images.map(img => (img.url || ""))
             setProductImages(img_urls);
         }
     }, [product, categorys, images])
@@ -159,10 +157,6 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         setProductCategorys(selectedValues);
     }
 
-    function handleSelectMainImage(filename: string) {
-        setMainImage(filename);
-    }
-
     function handleCurrencyInputChange(maskedvalue: string, floatvalue: number, event: ChangeEvent) {
         setValue(floatvalue);
     }
@@ -172,8 +166,8 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 <div className="box-images">
                     <Dropzone 
                         onFileUploaded={handleDrop} 
-                        onSelectMainFile={handleSelectMainImage}
-                        array_image={productImages}
+                        onChangeSelected={setMainImage}
+                        thumbnails={productImages}
                         selected={mainImage}
                     />
                 </div>
@@ -203,7 +197,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                             value={productManufacturer}
                             onChange={event => setProductManufacturer(Number(event.target.value))} 
                         >
-                            <option disabled value={0} selected>SELECIONE O FABRICANTE</option>
+                            <option disabled value={0}>SELECIONE O FABRICANTE</option>
                             {fabricantes.map(fab => (
                                 <option key={fab.id} value={fab.id}>{fab.name}</option>
                             ))}

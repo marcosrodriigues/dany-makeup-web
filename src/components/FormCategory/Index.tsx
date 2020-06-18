@@ -32,7 +32,6 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 
     function handleDrop(selectedFile: File[]) {
         setFile(selectedFile[0]);
-        setImageUrl('');
     }
 
     async function handleSubmit(event: FormEvent) {
@@ -74,8 +73,9 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                 <div className="box-images">
                     <Dropzone 
                         onFileUploaded={handleDrop}
+                        onChangeSelected={setImageUrl}
                         multiple={false} 
-                        array_image={[imageUrl]}
+                        selected={imageUrl}
                     />
                 </div>
             </div>
@@ -98,7 +98,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                 <Form.Group as={Row} controlId="description" className="w-100">
                     <Form.Label column sm="4">Descrição: </Form.Label>
                     <Col sm="8">
-                        <Form.Control as="textarea" rows={5} placeholder="Descrição da categoria" required
+                        <Form.Control as="textarea" rows={5} placeholder="Descrição da categoria"
                             onChange={(event) => setDescription(event.target.value)} 
                             value={description} 
                         />

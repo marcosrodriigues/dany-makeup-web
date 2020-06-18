@@ -80,8 +80,9 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
                 <div className="box-images">
                     <Dropzone 
                         onFileUploaded={handleDrop}
+                        onChangeSelected={setImageUrl}
                         multiple={false} 
-                        array_image={[imageUrl]}
+                        selected={imageUrl}
                     />
                 </div>
             </div>

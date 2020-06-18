@@ -6,86 +6,80 @@ import './style.css'
 
 interface Props {
     onFileUploaded: (file: File[]) => void,
-    onSelectMainFile?: (filename: string) => void,
+    onChangeSelected: (filename: string) => void,
     multiple?: boolean,
-    array_image?: string[],
-    selected?: string
+    thumbnails?: string[],
+    selected?: string,
+    array_images?: string[]
 }
-const Dropzone:React.FC<Props> = ( { onFileUploaded, 
-                                    multiple = true, 
-                                    onSelectMainFile = () => {}, 
-                                    array_image = [] ,
-                                    selected = ""
-                                } ) => {
+
+interface IFile {
+    file: File,
+    url: string,
+}
+const Dropzone:React.FC<Props> = (
+    {   onFileUploaded, 
+        onChangeSelected,
+        multiple = true, 
+        thumbnails = [] ,
+        selected = "",
+    }) => {
 
     const MAX_SIZE = 5242880;
     const ACCEPTED_FILES = "image/*"
 
-    const [files, setFiles] = useState<File[]>([] as File[]);
-    const [urls, setUrls] = useState<string[]>([]);
-
+    const [myFiles, setMyFiles] = useState<IFile[]>([] as IFile[])
     const [selectedUri, setSelectedUri] = useState<string>("");
     
-    const onDrop = useCallback(async (accepted:File[]) => {
-        accepted.map((each:File) => {
+    const onDrop = useCallback((accepted:File[]) => {
+        const my_files: IFile[] = accepted.map((each:File) => {
             const fileUrl = URL.createObjectURL(each);
-
-
-            if (multiple) {
-                files.push(each);
-                urls.push(fileUrl);
-    
-                setFiles([...files]);
-                setUrls([...urls]);
-            } else {
-                let files_pushed = files;
-                let urls_pushed = urls;
-
-                if (files_pushed.length > 0) {
-                    files_pushed = [];
-                    urls_pushed = [];
-                }
-
-                files_pushed.push(each);
-                setFiles([...files_pushed]);
-
-                urls_pushed.push(fileUrl);
-                setUrls([...urls_pushed])
-                setSelectedUri(fileUrl);
-            }
-
-            return fileUrl;
+            const my_file = {
+                file: each, url: fileUrl
+            };
+            
+            return my_file;
         })
+
+        const files = my_files
+            .map(f => (f.file));
+
+        if (!multiple) {
+            onChangeSelected(my_files[0].url);
+            onFileUploaded(files)
+            return;;
+        }
+
+        myFiles.map(f => {
+            my_files.push(f);
+        })
+
+        var pushed = my_files;
+        
+        console.log(pushed, my_files, myFiles)
+
+        setMyFiles(pushed);
+        onFileUploaded(files); 
     }, [onFileUploaded]);
     
     useEffect(() => {
-        onFileUploaded(files);  
-    }, [files]);
-    
-    useEffect(() => {
-        if (multiple) {
-            const images = array_image.map(img => { return img });
-            setSelectedUri(selected);
-            setUrls(images);
-        } else {
-            if (array_image[0] !== "")
-                setSelectedUri(array_image[0]);
+        if (thumbnails && multiple) {
+            const initials: IFile[]  = thumbnails.map(url_image => ({ file: {} as File, url: url_image }));
+            setMyFiles(initials);
         }
+    }, [thumbnails, multiple])
 
-    }, [array_image])
+    useEffect(() => {
+        setSelectedUri(selected);
+    }, [selected])
 
     const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
         accept: ACCEPTED_FILES,
         onDrop,
         minSize: 0,
         maxSize: MAX_SIZE,
-        multiple: true
+        multiple: true,
     })
-
-    function handleClickMainImage(selectedFileUrl: string, selectedFileName: string) {
-        setSelectedUri(selectedFileUrl);
-        onSelectMainFile(selectedFileName);
-    }
 
     function getFilename(url : string) {
         if (url.startsWith("http")) {
@@ -95,7 +89,11 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
     }
 
     function handleRemoveFile(url: string) {
-        console.log("removendo arquivo " + url)
+        const filtered = myFiles.filter(f => f.url !== url);
+
+        if (url === selectedUri) onChangeSelected(filtered[0].url);
+
+        setMyFiles(filtered);
     }
 
     const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > MAX_SIZE;
@@ -120,9 +118,11 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
                     }
                 </p>
                 }
-                
             </div>
-            { multiple && 
+            <button type="button" onClick={() => console.log(myFiles)}>
+                EXIBIR MYFILES
+            </button>
+            { multiple &&  
                 <div className="thumbnail">
                     <p>
                         Imagens adicionadas aparecerão aqui. <br />
@@ -131,57 +131,37 @@ const Dropzone:React.FC<Props> = ( { onFileUploaded,
                     
                     <div className="list-images row col-sm-12">
                         {
-                        urls.length > 0 ?
-                            urls.map((url_image, index) => {
+                            myFiles && myFiles.map(({ file, url }, index) => {
                                 let className = "each-box col-sm-4 ";
     
-                                if (url_image === selectedUri)
-                                    className = className + " selected";
-    
+                                if (url === selectedUri) className = className + " selected";
+
+                                const filename = file?.name ? file.name : getFilename(url);
+
                                 return (
                                     <div 
                                         key={index}
                                         className={className}
                                     >
-                                        <button type="button" onClick={() => handleRemoveFile(url_image)} className="btn-remove">
+                                        <button type="button" onClick={() => handleRemoveFile(url)} className="btn-remove">
                                             <FiXCircle size={24} title="Remover imagem"  />
                                         </button>
                                         
-                                        <div className="each-image" onClick={() => handleClickMainImage(url_image, getFilename(url_image))}>
-                                            <img src={url_image} className="image" alt="thumbnail" width="100%"  />
+                                        <div className="each-image" onClick={() => onChangeSelected(url)}>
+                                            <img src={url} className="image" alt="thumbnail" width="100%"  />
                                             <p className="centered" key={index}>
-                                                {getFilename(url_image)}
+                                                {filename}
                                             </p>
                                         </div>
                                         
                                     </div>
                                 )
-                            })
-                            :
-                        files.length > 0 &&
-                            files.map((file, index) => {
-                                let className = "each-image col-sm-4 ";
-
-                                if (urls[index] === selectedUri)
-                                    className = className + " selected";
-
-                                return (
-                                    <div 
-                                        onClick={() => handleClickMainImage(urls[index], file.name)}
-                                        key={index}
-                                        className={className}
-                                    >
-                                        <img src={urls[index]} className="image" alt="thumbnail" width="100%" height="100%" />
-                                        <p className="centered">{file.name}</p>
-                                    </div>
-                                )
+                                
                             })
                         }
                     </div>
                 </div>
             }
-            
-            
         </div>
         
     )

@@ -12,5 +12,6 @@ export default interface IProduct {
     categorys: ICategory[],
     manufacturer: IManufacturer,
     mainImage: string,
-    images: string[]
+    images: string[],
+    manufacturer_id: number,
 }
