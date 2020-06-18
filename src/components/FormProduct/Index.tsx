@@ -8,6 +8,7 @@ import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
 import CustomAlert from '../CustomAlert/Index';
 import CurrencyInput from 'react-currency-input';
+import IManufacturer from '../../interface/IManufacturer';
 
 
 const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefined, images = undefined }) => {
@@ -20,11 +21,14 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     const [amount, setAmount] = useState<number>(0);
     const [available, setAvailable] = useState(false);
     const [productCategorys, setProductCategorys] = useState<number[]>([]);  
+    const [productManufacturer, setProductManufacturer] = useState<number>(0);  
+
     const [files, setFiles] = useState<File[]>([]);  
     const [mainImage, setMainImage] = useState<string>("");
     const [productImages, setProductImages] = useState<string[]>([]);
 
     const [categorias, setCategorias] = useState<ICategory[]> ([]);
+    const [fabricantes, setFabricantes] = useState<IManufacturer[]> ([]);
     
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
@@ -48,6 +52,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             });
             setProductCategorys(ids);
         }
+
         
         if (images) {
             const img_urls = images.map(img => {
@@ -58,13 +63,21 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     }, [product, categorys, images])
 
     useEffect(() => {
+        const params = {
+            filter: false
+        };
         try {
-            api.get('categorys?available=true').then(response => {
+            api.get('categorys', { params }).then(response => {
                 const { data } = response;
                 setCategorias(data);
             })
+
+            api.get('manufacturers', { params }).then(response => {
+                const { data } = response;
+                setFabricantes(data);
+            })
         } catch (err) {
-            alert('Erro ao preencher categorias: ' + err);
+            alert('Erro ao preencher categorias e fabricantes: ' + err);
             console.log(err);
         }
         
@@ -91,6 +104,10 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             error_msg.push("Escolha a imagem principal.")
             setShowError(true);
         }
+        if (productManufacturer === 0) {
+            error_msg.push("Selecione o fabricante do produto.")
+            setShowError(true);
+        }
 
         if (error_msg.length > 0) {
             setErrors(error_msg);
@@ -108,6 +125,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         data.append('available', String(available)); 
         data.append('categorys', productCategorys.join(','));
         data.append('mainImage', mainImage);
+        data.append('manufacturer_id', String(productManufacturer));
 
         if(files.length > 0)
             for(let i = 0; i < files.length; i++)
@@ -174,6 +192,23 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                             value={name} 
                         />
                     </Col>
+                </Form.Group>
+                <Form.Group as={Row} controlId="fabricante" className="w-100">
+                    <label htmlFor="fabricante" className="form-label col-sm-4">
+                        Fabricante:
+                    </label>
+                    <div className="col-sm-8">
+                        <select className="form-control" 
+                            id="fabricantes" 
+                            value={productManufacturer}
+                            onChange={event => setProductManufacturer(Number(event.target.value))} 
+                        >
+                            <option disabled value={0} selected>SELECIONE O FABRICANTE</option>
+                            {fabricantes.map(fab => (
+                                <option key={fab.id} value={fab.id}>{fab.name}</option>
+                            ))}
+                        </select>
+                    </div>
                 </Form.Group>
                 <Form.Group as={Row} controlId="categoria" className="w-100">
                     <label htmlFor="categoria" className="form-label col-sm-4">

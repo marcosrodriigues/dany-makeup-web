@@ -31,10 +31,6 @@ const Manufacturers = () => {
         init();
     }, [currentPage, limitPerPage]);
 
-    useEffect(() => {
-        console.log(currentPage)
-    }, [currentPage])
-
     async function init() {
         const params = {
             name: inputSearch,

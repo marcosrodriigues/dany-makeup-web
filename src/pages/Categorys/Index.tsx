@@ -45,7 +45,6 @@ const Categorys = () => {
     useEffect(() => {
         let tables : any = [];
 
-        console.log(categorys);
         categorys && categorys.map(category => {
             let qtd_produtos = category.qtd_produtos ? category.qtd_produtos : 0;
             const n = {
