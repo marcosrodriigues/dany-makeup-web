@@ -67,6 +67,9 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
         }
     }
 
+    useEffect(() => {
+        
+    }, [imageUrl]);
     return (
         <Form onSubmit={handleSubmit} encType="multipart/form-data"  className="form row">
             <div className="images col-sm-6">

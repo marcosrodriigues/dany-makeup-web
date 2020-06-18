@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../../components/Header/Index';
 
 import './style.css';
@@ -6,12 +6,28 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import './style.css';
-import api from '../../services/api';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { FaEdit } from 'react-icons/fa';
+import BoxFilter from '../../components/BoxFilter/Index';
 
 const Promotions = () => {
     const [promotions, setPromotions] = useState([]);
+
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [limitPerPage, setLimitPerPage] = useState<number>(5);
+    const [count, setCount] = useState<number>(0);
+    const [offset, setOffset] = useState<number>(0);
+    const [start, setStart] = useState<number>(0);
+    const [end, setEnd] = useState<number>(5);
+
+    const [dataTable, setDataTable] = useState([]);
+
+    function handleSubmitFilterForm(event) {
+        event.preventDefault();
+        //init();
+    }
+
+    function handleChangeLimitPerPage(event) {
+        setLimitPerPage(Number(event.target.value));
+    }
 
     return (
         <div className="page">
@@ -24,6 +40,15 @@ const Promotions = () => {
                         <div className="search">
                             <Button variant="dark"><Link className="custom-link" to="/promocoes/novo" >Nova promoção</Link></Button>
                         </div>
+                    </div>
+
+                    <div className="box-filter bg-dark">
+                        <BoxFilter
+                            limitPerPage={limitPerPage}
+                            onChangeLimitPerPage={handleChangeLimitPerPage}
+                            onSubmit={handleSubmitFilterForm}
+                            fieldProps={[{}]}
+                        />
                     </div>
 
                     <div className="box-table table-responsive">

@@ -20,7 +20,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     const [value, setValue] = useState<number>(0.0);    
     const [amount, setAmount] = useState<number>(0);
     const [available, setAvailable] = useState(false);
-    const [productCategorys, setProductCategorys] = useState<number[]>([]);  
+    const [productCategorys, setProductCategorys] = useState([]);  
     const [productManufacturer, setProductManufacturer] = useState<number>(0);  
 
     const [files, setFiles] = useState<File[]>([]);  
@@ -48,7 +48,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         }
         
         if (categorys) {
-            const ids = categorys.map(cat => {
+            const ids: any = categorys.map(cat => {
                 return cat.id;
             });
             setProductCategorys(ids);
@@ -147,7 +147,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     function handleSelect(event: ChangeEvent<HTMLSelectElement>) {
         const options = event.target.options;
 
-        let selectedValues : number[] = [];
+        let selectedValues : any = [];
 
         for (let i = 0; i < options.length; i++) {
             if (options[i].selected)
@@ -213,7 +213,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                         <select className="form-control" 
                             id="categoria" 
                             multiple
-                            value={productCategorys ? JSON.stringify(productCategorys) : []}
+                            value={productCategorys}
                             onChange={handleSelect} 
                         >
                             {categorias.map(cat => (

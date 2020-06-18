@@ -47,9 +47,10 @@ const Dropzone:React.FC<Props> = (
             .map(f => (f.file));
 
         if (!multiple) {
-            onChangeSelected(my_files[0].url);
+            console.log(my_files);
+            onChangeSelectedFile(my_files[0].url);
             onFileUploaded(files)
-            return;;
+            return;
         }
 
         myFiles.map(f => {
@@ -102,9 +103,9 @@ const Dropzone:React.FC<Props> = (
             setThumbnails(filtered.map(f => f.url));
     }
 
-    function onChangeSelectedFile(url: string, filename: string) {
+    function onChangeSelectedFile(url: string, filename: (string|undefined) = undefined) {
         setSelectedUri(url);
-        if (filename == undefined) filename = url;
+        if (filename === undefined) filename = url;
         onChangeSelected(filename);
     }
 
@@ -132,7 +133,9 @@ const Dropzone:React.FC<Props> = (
                 }
             </div>
             
-            { multiple &&  
+            {/* <button onClick={() => console.log(myFiles)}>CLICAR</button> */}
+
+            { thumbnails.length > 0 || multiple &&  
                 <div className="thumbnail">
                     <p>
                         Imagens adicionadas aparecerão aqui. <br />

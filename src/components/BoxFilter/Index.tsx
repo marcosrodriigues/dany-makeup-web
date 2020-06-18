@@ -20,14 +20,14 @@ const BoxFilter = ({ limitPerPage = 5, onChangeLimitPerPage, onSubmit, fieldProp
                         {
                             fieldProps && fieldProps.map((item, index) => {
                                 return (
-                            <input 
-                                key={index}
-                                id={item.name} 
-                                placeholder={item.name} 
-                                className="form-control bg-gold filter-input"
-                                onChange={event => item.setValue(event.target.value)}
-                                value={item.value} 
-                            />
+                                    <input 
+                                        key={index}
+                                        id={item.name} 
+                                        placeholder={item.name} 
+                                        className="form-control bg-gold filter-input"
+                                        onChange={event => item.setValue(event.target.value)}
+                                        value={item.value} 
+                                    />
                                 )
                             })
                         }

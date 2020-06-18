@@ -13,6 +13,7 @@ import Promotions from './pages/Promotions/Index';
 import Manufacturers from './pages/Manufacturers/Index';
 import NewManufacturer from './pages/NewManufacturer/Index';
 import EditManufacturer from './pages/EditManufacturer/Index';
+import NewPromotion from './pages/NewPromotion/Index';
 
 const Routes = () => {
     return (
@@ -29,6 +30,7 @@ const Routes = () => {
                 <Route component={NewProduct} path="/produtos/novo" exact />
                 <Route component={EditProduct} path="/produtos/:id" exact />
                 <Route component={Promotions} path="/promocoes" exact />
+                <Route component={NewPromotion} path="/promocoes/novo" exact />
             </Switch>
         </BrowserRouter>
     )
