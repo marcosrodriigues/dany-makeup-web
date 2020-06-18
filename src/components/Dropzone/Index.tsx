@@ -131,9 +131,7 @@ const Dropzone:React.FC<Props> = (
                 </p>
                 }
             </div>
-            <button type="button" onClick={() => console.log(myFiles)}>
-                EXIBIR MYFILES
-            </button>
+            
             { multiple &&  
                 <div className="thumbnail">
                     <p>
