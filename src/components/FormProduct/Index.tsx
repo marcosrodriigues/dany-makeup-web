@@ -168,6 +168,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                         onFileUploaded={handleDrop} 
                         onChangeSelected={setMainImage}
                         thumbnails={productImages}
+                        setThumbnails={setProductImages}
                         selected={mainImage}
                     />
                 </div>

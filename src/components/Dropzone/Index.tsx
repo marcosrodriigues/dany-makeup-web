@@ -7,6 +7,7 @@ import './style.css'
 interface Props {
     onFileUploaded: (file: File[]) => void,
     onChangeSelected: (filename: string) => void,
+    setThumbnails?: (thumbs: string[]) => void
     multiple?: boolean,
     thumbnails?: string[],
     selected?: string,
@@ -20,6 +21,7 @@ interface IFile {
 const Dropzone:React.FC<Props> = (
     {   onFileUploaded, 
         onChangeSelected,
+        setThumbnails,
         multiple = true, 
         thumbnails = [] ,
         selected = "",
@@ -70,7 +72,8 @@ const Dropzone:React.FC<Props> = (
     }, [thumbnails, multiple])
 
     useEffect(() => {
-        setSelectedUri(selected);
+        if (selected.startsWith('http://'))
+            setSelectedUri(selected);
     }, [selected])
 
     const { getRootProps, getInputProps, isDragActive, isDragReject, fileRejections } = useDropzone({
@@ -94,6 +97,15 @@ const Dropzone:React.FC<Props> = (
         if (url === selectedUri) onChangeSelected(filtered[0].url);
 
         setMyFiles(filtered);
+
+        if (setThumbnails)
+            setThumbnails(filtered.map(f => f.url));
+    }
+
+    function onChangeSelectedFile(url: string, filename: string) {
+        setSelectedUri(url);
+        if (filename == undefined) filename = url;
+        onChangeSelected(filename);
     }
 
     const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > MAX_SIZE;
@@ -136,7 +148,7 @@ const Dropzone:React.FC<Props> = (
     
                                 if (url === selectedUri) className = className + " selected";
 
-                                const filename = file?.name ? file.name : getFilename(url);
+                                const filename = file.name ? file.name : getFilename(url);
 
                                 return (
                                     <div 
@@ -147,7 +159,7 @@ const Dropzone:React.FC<Props> = (
                                             <FiXCircle size={24} title="Remover imagem"  />
                                         </button>
                                         
-                                        <div className="each-image" onClick={() => onChangeSelected(url)}>
+                                        <div className="each-image" onClick={() => onChangeSelectedFile(url, file.name)}>
                                             <img src={url} className="image" alt="thumbnail" width="100%"  />
                                             <p className="centered" key={index}>
                                                 {filename}
