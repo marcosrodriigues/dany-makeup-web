@@ -1,5 +1,5 @@
 .thumbnail {
-    padding: 16px;
+    padding-left: 16px;
     width: 100%;
     flex-direction: column;
 }

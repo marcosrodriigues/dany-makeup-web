@@ -8,10 +8,11 @@ import './style.css'
 interface Props {
     list_images: IFile[],
     selected: string,
+    messageBox?: boolean
     onSelectedImage: (url: string, filename: string) => void
     setListImages: (images: IFile[]) => void
 }
-const Thumbnails:React.FC<Props> = ({ list_images = [], selected="", onSelectedImage, setListImages }) => {
+const Thumbnails:React.FC<Props> = ({ list_images = [], selected="", onSelectedImage, setListImages, messageBox = true }) => {
     function handleRemoveFile(url: string) {
         const filtered = list_images.filter(f => f.url !== url);
 
@@ -37,10 +38,13 @@ const Thumbnails:React.FC<Props> = ({ list_images = [], selected="", onSelectedI
 
     return (
         <div className="thumbnail">
-            <p>
-                Imagens adicionadas aparecerão aqui. <br />
-                <small>Selecione a imagem principal</small>
-            </p>
+            {
+                messageBox && 
+                <p>
+                    Imagens adicionadas aparecerão aqui. <br />
+                    <small>Selecione a imagem principal</small>
+                </p>
+            }
             
             <div className="list-images row col-sm-12">
                 {

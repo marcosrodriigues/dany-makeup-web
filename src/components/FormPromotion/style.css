@@ -38,16 +38,17 @@
 }
 
 .selected-product {
+    padding: 16px;
     margin-top: 8px;
     border-bottom: 1px solid #cccccc
 }
 
-.section-container .section-images > div {
+.section-container .section-images {
     flex-direction: row;
     display: flex;
 }
 
-.section-container .section-images > div > div {
+.section-container .section-images > div {
     width: 50%
 }
 
@@ -61,4 +62,13 @@
 
 .mt16 {
     margin-top: 16px;
+}
+
+.mlr8 {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.react-datepicker {
+    width: 330px;
 }

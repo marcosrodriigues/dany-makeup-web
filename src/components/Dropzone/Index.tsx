@@ -41,26 +41,24 @@ const Dropzone:React.FC<Props> = (
     const isFileTooLarge = fileRejections.length > 0 && fileRejections[0].file.size > MAX_SIZE;
 
     return (
-        <div>
-            <div { ...getRootProps()} className="dropzone">
-                <input { ...getInputProps()} accept={ACCEPTED_FILES} />
-                {
-                <p> 
-                    { 
-                    selected ?
-                        <img src={selected} alt="Imagem escolhida" />
-                    :
-                        <>
-                            <FiUpload />
-                            {!isDragActive && 'Clique ou arraste as imagens aqui'}
-                            {isDragActive && !isDragReject && "Solte a imagem."}
-                            {isDragReject && "Tipo de arquivo não permitido!"}
-                            {isFileTooLarge && "Arquivo é muito pesado, tamanho máximo permitido: 500kb"}
-                        </>
-                    }
-                </p>
+        <div { ...getRootProps()} className="dropzone">
+            <input { ...getInputProps()} accept={ACCEPTED_FILES} />
+            {
+            <p> 
+                { 
+                selected ?
+                    <img src={selected} alt="Imagem escolhida" />
+                :
+                    <>
+                        <FiUpload />
+                        {!isDragActive && 'Clique ou arraste as imagens aqui'}
+                        {isDragActive && !isDragReject && "Solte a imagem."}
+                        {isDragReject && "Tipo de arquivo não permitido!"}
+                        {isFileTooLarge && "Arquivo é muito pesado, tamanho máximo permitido: 500kb"}
+                    </>
                 }
-            </div>
+            </p>
+            }
         </div>
     )
 }

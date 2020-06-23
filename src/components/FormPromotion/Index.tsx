@@ -2,19 +2,41 @@ import React, { useState, useEffect } from 'react';
 import CustomAlert from '../CustomAlert/Index';
 
 import './style.css'
+import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker-cssmodules.css';
+import CurrencyInput from 'react-currency-input';
+
 import Dropzone from '../Dropzone/Index';
 import api from '../../services/api';
+import Thumbnails from '../Thumbnails/Index';
+import IFile from '../../interface/IFile';
+
+import DatePicker, { registerLocale } from 'react-datepicker';
+
+import pt from 'date-fns/esm/locale/pt-BR'
+import { FaDownload } from 'react-icons/fa';
+import { IoIosCloseCircleOutline } from 'react-icons/io';
+import { getFilename } from '../../util/util';
+registerLocale('pt', pt)
 
 const FormPromotion = () => {
+    const [id, setId] = useState(0);
     const [name, setName] = useState("");
-    const [start, setStart] = useState({} as Date);
-    const [end, setEnd] = useState({} as Date);
+
+    const [start, setStart] = useState(new Date());
+    const [end, setEnd] = useState(new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000));
+
     const [originalValue, setOriginalValue] = useState(0);
     const [promotionValue, setPromotionValue] = useState(0);
     const [products, setProducts] = useState<any[]>([]);
     const [discount, setDiscount] = useState(0);
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<IFile[]>([]);
+    const [mainImage, setMainImage] = useState("");
+    const [mainImageUri, setMainImageUri] = useState<string>("");
+    const [discountType, setDiscountType] = useState<string>("%");
     
+    const [files, setFiles] = useState<File[]>([]);
+
     const [categorys, setCategorys] = useState<any[]>([]);
     const [allProducts, setAllProducts] = useState<any[]>([]);
     const [idProducts, setIdProducts] = useState<any[]>([]);
@@ -45,6 +67,15 @@ const FormPromotion = () => {
         setAllProducts(prods);
     }, [categorys]);
 
+    useEffect(() => {
+        let sum_value = 0;
+        products.map(prod => {
+            sum_value = sum_value + Number(prod.value);
+        })
+        setOriginalValue(sum_value);
+        setPromotionValue(sum_value);
+    }, [products])
+
     function getOnlyProducts(categorys: any[]) {
 
         const products: any = [];
@@ -57,8 +88,42 @@ const FormPromotion = () => {
         return products;
     }
 
-    function handleSubmit() {
+    async function handleSubmit(e) {
+        e.preventDefault();
 
+        const params = new FormData();
+
+        params.append('name', name);
+        params.append('start', String(start));
+        params.append('end', String(end));
+        params.append('originalValue', String(originalValue));
+        params.append('discountType', discountType);
+        params.append('discount', String(discount));
+        params.append('promotionValue', String(promotionValue));
+        params.append('mainImage', mainImage);
+
+        const products_id = products.map(prod => prod.id).join(',');
+        params.append('products', products_id);
+
+        for(let i = 0; i < images.length; i++) {
+            if (!images[i].url.startsWith('blob'))
+                params.append('images[]', images[i].url);
+        }
+
+        for(let i = 0; i < files.length; i++) {
+            params.append('files[]', files[i]);
+        }
+
+        try {
+            if (id !== 0) await api.put('promotions', params);
+            else await api.post('promotions', params);
+
+            setShowSucess(true);
+        } catch (err) {
+            console.log("Error save promotion", err);
+            setShowError(true);
+            setErrors(err.error);
+        }
     }
 
     function handleSelect(e) {
@@ -87,14 +152,58 @@ const FormPromotion = () => {
             }
         })
 
-        console.log(products, selected_products);
-
         setProducts(selected_products)
     }
 
+    function handlePromotionValue(maskedvalue: string, floatvalue: number) {
+        setPromotionValue(floatvalue);
+    }
+
+    function handleFileUploads(uploadeds: IFile[]) {
+        const uploaded_images= images;
+        const uploaded_files = files;
+
+        uploadeds.map(up => {
+            uploaded_images.push(up); 
+            uploaded_files.push(up.file); 
+        });
+
+        setFiles([...uploaded_files]);
+        setImages([...uploaded_images]);
+    }
+
+    async function handleClickImportImageButton(id: number) {
+        const response = await api.get(`product_images/${id}`);
+        const images_url: any = response.data;
+
+        const imported_files = images_url.map(img => ({ file: { name: getFilename(img.url) } as File, url: img.url }))
+
+        if (images.length > 0)
+            images.map(img => imported_files.push(img))
+
+        console.log(imported_files);
+
+        setImages(imported_files);
+    }
+
+    function handleClickRemoveImage(id: number) {
+        const filtered = products.filter(prod => prod.id != id);
+        setProducts(filtered);
+    
+    }
+
+    function handleMainSelectedImage(url: string, filename: string) {
+        setMainImageUri(url);
+        setMainImage(filename);
+    }
+
     useEffect(() => {
-        console.log('products', products);
-    }, [products])
+        if (discountType === "R$") {
+            setPromotionValue(originalValue - discount);
+        } else if (discountType === "%") {
+            setPromotionValue(originalValue - (originalValue * (discount / 100)))
+        }
+    }, [discountType, discount])
 
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="form row">
@@ -109,27 +218,90 @@ const FormPromotion = () => {
                     <div className="form-group row">
                         <label htmlFor="name" className="col-form-label col-sm-1">Nome: </label>
                         <div className="col-sm-11">
-                            <input id="name" type="text" className="form-control"/>
+                            <input 
+                                id="name" 
+                                type="text" 
+                                className="form-control"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)} 
+                            />
                         </div>
                     </div>
                     <div className="form-group form-row">
-                        <label htmlFor="start" className="col-form-label col-sm-1">Inicio</label>
+                        <label htmlFor="start" className="col-form-label col-sm-1">Inicio:</label>
                         <div className="col-sm-3">
-                            <input id="start" type="date" className="form-control"/>
+                            <DatePicker
+                                id="start"
+                                selected={start}
+                                onChange={(date: Date) => setStart(date)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                locale="pt"
+                                timeIntervals={30}
+                                timeCaption="Hora"
+                                dateFormat="dd/MM/yyyy hh:mm aa"
+                                className="form-control"
+                                placeholderText="Início da promoção"
+                            />
                         </div>
 
-                        <label htmlFor="end" className="col-form-label col-sm-1">Fim</label>
+                        <label htmlFor="end" className="col-form-label col-sm-1">Fim:</label>
                         <div className="col-sm-3">
-                            <input id="end" type="date" pattern={"dd/MM/yyyy"} className="form-control"/>
+                            <DatePicker
+                                id="end"
+                                selected={end}
+                                onChange={(date: Date) => setEnd(date)}
+                                showTimeSelect
+                                timeFormat="HH:mm"
+                                locale="pt"
+                                timeIntervals={30}
+                                timeCaption="Hora"
+                                dateFormat="dd/MM/yyyy hh:mm aa"
+                                className="form-control"
+                                placeholderText="Fim da promoção"
+                                minDate={start}
+
+                            />
                         </div>
 
-                        <div className="col-sm-4 form-row">
-                            <label htmlFor="value" className="col-form-label col-sm-2">Valor</label>
-                            <div className="col-sm-10">
-                                <input id="value" type="number" className="form-control"/>
+                        <div className="col-sm-4">
+                            <div className="form-group row">
+                                <label htmlFor="" className="col-form-label col-sm-4">Valor original:</label>
+                                <div className="col-sm-8">
+                                    <label className="col-form-label">R$ {originalValue.toFixed(2)}</label>
+                                </div>
                             </div>
-                            <div className="col-sm-12 right">
-                                <small>*Valor original: R$ xx,xx</small>
+                            
+                            <div className="form-group row">
+                                <label htmlFor="discount" className="col-form-label col-sm-4">Desconto:</label>
+                                <div className="col-sm-4">
+                                    <select id="select-discount" value={discountType} onChange={(e) => setDiscountType(e.target.value)} className="form-control">
+                                        <option value="%">%</option>
+                                        <option value="R$">R$</option>
+                                    </select>
+                                </div>
+                                <div className="col-sm-4">
+                                    <CurrencyInput 
+                                        value={discount}
+                                        onChange={setDiscount}
+                                        className="form-control"
+                                        id="discount"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group row">
+                                <label htmlFor="discount" className="col-form-label col-sm-4">Valor final:</label>
+                                <div className="col-sm-8">
+                                    <CurrencyInput 
+                                        inputType="text"
+                                        value={promotionValue}
+                                        prefix="R$ "
+                                        onChange={handlePromotionValue}
+                                        className="form-control"
+                                        id="value"
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,14 +340,8 @@ const FormPromotion = () => {
                         <div className="col-sm-2 flex-center">
                             <div className="buttons">
                                 <div className="btn btn-dark w-100" onClick={handleAddProducts}>
-                                    <button type="button" className="btn btn-dark"> >>> </button>
+                                    <button type="button" className="btn btn-dark"> {">>>"} </button>
                                 </div>
-                                {
-                                    products.length > 0 &&
-                                    <div className="btn btn-dark w-100 mt16" onClick={handleAddProducts}>
-                                        <button type="button" className="btn btn-dark"> {"<<<"} </button>
-                                    </div>
-                                }
                             </div>
                         </div>
                         <div className="col-sm-5 align-top">
@@ -192,7 +358,23 @@ const FormPromotion = () => {
                                                 </div>
                                                 <div className="col-sm-8">
                                                     <p>{prod.name}</p>
-                                                    <p>{prod.value}</p>
+                                                    <p>R$ {Number(prod.value).toFixed(2)}</p>
+                                                    <div className="col-sm-12">
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-dark mlr8 col-sm-5"
+                                                            onClick={() => handleClickImportImageButton(prod.id)}
+                                                        >  
+                                                            <FaDownload aria-label="Importar imagens" className="mlr8" />
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-danger mlr8 col-sm-5"
+                                                            onClick={() => handleClickRemoveImage(prod.id)}
+                                                        >  
+                                                            <IoIosCloseCircleOutline aria-label="Importar imagens" className="mlr8" />
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         )
@@ -207,11 +389,15 @@ const FormPromotion = () => {
                 <div className="section-container">
                     <div className="section-images">
                         <Dropzone
-                            // multiple={false}
-                            // onChangeSelected={() => console.log("")}
-                            onFileUploaded={() => console.log("")}
-                            selected=""
-                            //thumbnails={["", "", ""]}
+                            onFileUploaded={handleFileUploads}
+                            selected={mainImageUri}
+                        />
+                        <Thumbnails
+                            list_images={images}
+                            setListImages={setImages}
+                            onSelectedImage={handleMainSelectedImage}
+                            selected={mainImageUri}
+                            messageBox={false}
                         />
                     </div>
                 </div>

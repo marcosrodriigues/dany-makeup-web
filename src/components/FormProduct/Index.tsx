@@ -183,6 +183,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     function handleCurrencyInputChange(maskedvalue: string, floatvalue: number, event: ChangeEvent) {
         setValue(floatvalue);
     }
+    
     return (
         <Form onSubmit={handleSubmit}  className="form row">
             <div className="images col-sm-6">
