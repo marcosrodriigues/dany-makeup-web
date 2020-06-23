@@ -207,10 +207,11 @@ const FormPromotion = () => {
                 <div className="section-container">
                     <div className="section-images">
                         <Dropzone
-                            multiple={false}
-                            onChangeSelected={() => console.log("")}
+                            // multiple={false}
+                            // onChangeSelected={() => console.log("")}
                             onFileUploaded={() => console.log("")}
-                            thumbnails={["", "", ""]}
+                            selected=""
+                            //thumbnails={["", "", ""]}
                         />
                     </div>
                 </div>

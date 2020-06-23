@@ -6,6 +6,7 @@ import Dropzone from '../Dropzone/Index';
 import api from '../../services/api';
 import CustomAlert from '../CustomAlert/Index';
 import IPropsFormManufacturer from '../../interface/IPropsFormManufacturer';
+import IFile from '../../interface/IFile';
 
 const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) => {
 
@@ -29,9 +30,9 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
         }
     }, [manufacturer]);
 
-    function handleDrop(selectedFile: File[]) {
-        setFile(selectedFile[0]);
-        setImageUrl('');
+    function handleDrop(selectedFile: IFile[]) {
+        setFile(selectedFile[0].file);
+        setImageUrl(selectedFile[0].url)
     }
 
     async function handleSubmit(event: FormEvent) {
@@ -80,8 +81,6 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
                 <div className="box-images">
                     <Dropzone 
                         onFileUploaded={handleDrop}
-                        onChangeSelected={setImageUrl}
-                        multiple={false} 
                         selected={imageUrl}
                     />
                 </div>

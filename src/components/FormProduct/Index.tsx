@@ -9,6 +9,9 @@ import api from '../../services/api';
 import CustomAlert from '../CustomAlert/Index';
 import CurrencyInput from 'react-currency-input';
 import IManufacturer from '../../interface/IManufacturer';
+import IFile from '../../interface/IFile';
+import Thumbnails from '../Thumbnails/Index';
+import { getFilename } from '../../util/util';
 
 
 const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefined, images = undefined }) => {
@@ -25,7 +28,8 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
 
     const [files, setFiles] = useState<File[]>([]);  
     const [mainImage, setMainImage] = useState<string>("");
-    const [productImages, setProductImages] = useState<string[]>([]);
+    const [mainImageUri, setMainImageUri] = useState<string>("");
+    const [productImages, setProductImages] = useState<IFile[]>([]);
 
     const [categorias, setCategorias] = useState<ICategory[]> ([]);
     const [fabricantes, setFabricantes] = useState<IManufacturer[]> ([]);
@@ -44,6 +48,7 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             setAmount(product.amount);
             setAvailable(product.available);
             setMainImage(product.mainImage);
+            setMainImageUri(product.mainImage);
             setProductManufacturer(product.manufacturer_id);
         }
         
@@ -55,7 +60,13 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         }
         
         if (images) {
-            const img_urls = images.map(img => (img.url || ""))
+            const img_urls = images.map(img => {
+                const url = img.url || "";
+                return {
+                    file: { name: getFilename(url) } as File, 
+                    url: url
+                }
+            })
             setProductImages(img_urls);
         }
     }, [product, categorys, images])
@@ -81,8 +92,13 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         
     }, [])
 
-    function handleDrop(files: File[]) {
-        setFiles(files);
+    async function handleDrop(uploadedFiles: IFile[]) {
+        await Promise.all(uploadedFiles.map(f => {
+            productImages.push(f);
+            files.push(f.file);
+        }))
+        setProductImages([...productImages]);
+        setFiles([...files]);
     }
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -130,8 +146,10 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 data.append('images[]', files[i]);
 
         if (productImages)
-            for(let i = 0; i < productImages.length; i++)
-                data.append('url_images[]', productImages[i]);
+            for(let i = 0; i < productImages.length; i++) {
+                if (!productImages[i].url.startsWith('blob'))
+                    data.append('url_images[]', productImages[i].url);
+            }
 
         try {
             if (id !== 0) await api.put('products', data);
@@ -157,6 +175,11 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         setProductCategorys(selectedValues);
     }
 
+    function handleSelectedMainImage(url: string, filename: string) {
+        setMainImageUri(url);
+        setMainImage(filename);
+    }
+
     function handleCurrencyInputChange(maskedvalue: string, floatvalue: number, event: ChangeEvent) {
         setValue(floatvalue);
     }
@@ -166,10 +189,13 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 <div className="box-images">
                     <Dropzone 
                         onFileUploaded={handleDrop} 
-                        onChangeSelected={setMainImage}
-                        thumbnails={productImages}
-                        setThumbnails={setProductImages}
-                        selected={mainImage}
+                        selected={mainImageUri}
+                    />
+                    <Thumbnails
+                        onSelectedImage={handleSelectedMainImage}
+                        setListImages={setProductImages}
+                        list_images={productImages}
+                        selected={mainImageUri}
                     />
                 </div>
             </div>
