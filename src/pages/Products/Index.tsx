@@ -39,8 +39,6 @@ const Produtos = () => {
         api.get('products', { params }).then(async response => {
             const { data } = response;
 
-            console.log(data);
-
             setProducts(data);
             setCount(Number(response.headers["x-total-count"]));
             setOffset(limitPerPage * (currentPage - 1));
