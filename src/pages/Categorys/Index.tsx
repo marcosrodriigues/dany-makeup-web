@@ -37,9 +37,9 @@ const Categorys = () => {
     }, [offset, limitPerPage, count])
 
     useEffect(() => {
-        let current = Math.ceil(count / limitPerPage);
-        if (current < 1) current = 1;
-        setCurrentPage(current)
+        let nPages = Math.ceil(count / limitPerPage);
+        let newCurrentPage = (currentPage > nPages && nPages > 0) ? nPages  : currentPage
+        setCurrentPage(newCurrentPage);
     }, [limitPerPage])
 
     useEffect(() => {

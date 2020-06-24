@@ -131,6 +131,10 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
     async function handleSubmit(e) {
         e.preventDefault();
 
+        setShowSucess(false);
+        setShowError(false);
+        setErrors([]);
+        
         const data = new FormData();
 
         data.append('id', String(id));

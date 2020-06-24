@@ -17,7 +17,7 @@ const Header = () => {
                             <Nav.Link as={NavLink} to="/categorias" className="custom-link">Categorias</Nav.Link>
                             <Nav.Link as={NavLink} to="/produtos" className="custom-link">Produtos</Nav.Link>
                             <Nav.Link as={NavLink} to="/promocoes" className="custom-link">Promoções</Nav.Link>
-                            <Nav.Link as={NavLink} to="/banner" className="custom-link">Banner</Nav.Link>
+                            <Nav.Link as={NavLink} to="/banners" className="custom-link">Banner</Nav.Link>
                             <Nav.Link as={NavLink} to="/clientes" className="custom-link">Clientes</Nav.Link>
                             <Nav.Link as={NavLink} to="/pedidos" className="custom-link">Pedidos</Nav.Link>
                         </Nav>
