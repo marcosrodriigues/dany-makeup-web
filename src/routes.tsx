@@ -14,6 +14,7 @@ import Manufacturers from './pages/Manufacturers/Index';
 import NewManufacturer from './pages/NewManufacturer/Index';
 import EditManufacturer from './pages/EditManufacturer/Index';
 import NewPromotion from './pages/NewPromotion/Index';
+import EditPromotion from './pages/EditPromotion/Index';
 
 const Routes = () => {
     return (
@@ -31,6 +32,7 @@ const Routes = () => {
                 <Route component={EditProduct} path="/produtos/:id" exact />
                 <Route component={Promotions} path="/promocoes" exact />
                 <Route component={NewPromotion} path="/promocoes/novo" exact />
+                <Route component={EditPromotion} path="/promocoes/:id" exact />
             </Switch>
         </BrowserRouter>
     )

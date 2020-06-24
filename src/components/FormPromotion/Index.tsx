@@ -17,9 +17,11 @@ import pt from 'date-fns/esm/locale/pt-BR'
 import { FaDownload } from 'react-icons/fa';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { getFilename } from '../../util/util';
+import IPromotion from '../../interface/IPromotion';
 registerLocale('pt', pt)
 
-const FormPromotion = () => {
+const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], promotionImages = [] }) => {
+
     const [id, setId] = useState(0);
     const [name, setName] = useState("");
 
@@ -48,6 +50,44 @@ const FormPromotion = () => {
     useEffect(() => {
         init();
     }, [])
+
+
+    useEffect(() => {
+        if (promotion.id !== undefined){
+            setId(promotion.id);
+            setName(promotion.name);
+            setStart(new Date(promotion.start));
+            setEnd(new Date(promotion.end));
+            setOriginalValue(Number(promotion.originalValue));
+            setDiscountType(promotion.discountType);
+            setDiscount(promotion.discount);
+            setPromotionValue(promotion.promotionValue);
+            setMainImage(promotion.mainImage);
+            setMainImageUri(promotion.mainImage);
+        }
+    }, [promotion]);
+
+    useEffect(() => {
+        if (promotionProducts.length > 0) {
+            setProducts(promotionProducts);
+
+            const ids = promotionProducts.map((prod: any) => prod.id);
+            setIdProducts(ids);
+        }
+    }, [promotionProducts])
+
+    useEffect(() => {
+        if (promotionImages.length > 0) {
+            const imgs = promotionImages
+                .map((image: any) => {
+                    return {
+                        file: { name: getFilename(image.url) } as File,
+                        url: image.url
+                    }
+                })
+            setImages(imgs);
+        }
+    }, [promotionImages])
     
     async function init() {
         try {
@@ -91,32 +131,33 @@ const FormPromotion = () => {
     async function handleSubmit(e) {
         e.preventDefault();
 
-        const params = new FormData();
+        const data = new FormData();
 
-        params.append('name', name);
-        params.append('start', String(start));
-        params.append('end', String(end));
-        params.append('originalValue', String(originalValue));
-        params.append('discountType', discountType);
-        params.append('discount', String(discount));
-        params.append('promotionValue', String(promotionValue));
-        params.append('mainImage', mainImage);
+        data.append('id', String(id));
+        data.append('name', name);
+        data.append('start', String(start));
+        data.append('end', String(end));
+        data.append('originalValue', String(originalValue));
+        data.append('discountType', discountType);
+        data.append('discount', String(discount));
+        data.append('promotionValue', String(promotionValue));
+        data.append('mainImage', mainImage);
 
         const products_id = products.map(prod => prod.id).join(',');
-        params.append('products', products_id);
+        data.append('products', products_id);
 
         for(let i = 0; i < images.length; i++) {
             if (!images[i].url.startsWith('blob'))
-                params.append('images[]', images[i].url);
+            data.append('images[]', images[i].url);
         }
 
         for(let i = 0; i < files.length; i++) {
-            params.append('files[]', files[i]);
+            data.append('files[]', files[i]);
         }
 
         try {
-            if (id !== 0) await api.put('promotions', params);
-            else await api.post('promotions', params);
+            if (id !== 0) await api.put('promotions', data);
+            else await api.post('promotions', data);
 
             setShowSucess(true);
         } catch (err) {
