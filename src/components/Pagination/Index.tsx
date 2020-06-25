@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import './style.css';
 
-const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 }) => {
+const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5, maxPageShow = 7 }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [countPages, setCountPages] = useState(1);
     const [listPages, setListPages] = useState<number[]>([]);
     const [isBeforeEnable, setIsBeforeEnable] = useState(false);
     const [isNextEnable, setIsNextEnable] = useState(false);
+
+    const [firstPageShow, setFirstPageShow] = useState(1);
+    const [lastPageShow, setLastPageShow] = useState(countPages);
 
     useEffect(() => {
         setCurrentPage(initialPage)
@@ -16,6 +19,23 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
     useEffect(() => {
         setCountPages(Math.ceil(totalRecords / perPage));
     }, [totalRecords, perPage]);
+
+    useEffect(() => {
+        const half = Math.floor(maxPageShow / 2);
+        let firstPage = currentPage - half;
+        let lastPage = currentPage + half;
+
+        if (lastPage < maxPageShow)
+            lastPage = maxPageShow;
+
+        if (currentPage == countPages)
+            firstPage = countPages - half * 2;
+
+        if (firstPage + half * 2 <= countPages)
+            setFirstPageShow(firstPage > 0 ? firstPage : 1);
+        
+        setLastPageShow(lastPage > countPages ? countPages : lastPage);
+    }, [currentPage, countPages])
 
     useEffect(() => {
         let count_pages: number[] = [];
@@ -42,8 +62,16 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
                     <a className="page-link" tabIndex={-1}>Anterior</a>
                 </li>
                 {
-                    
+                    firstPageShow !== 1 &&
+                    <li className="page-item" onClick={() => handleClick(1)}>
+                        <a className="page-link" tabIndex={-1}>...</a>
+                    </li>
+                }
+                {
                     listPages.map(numberPage => {
+                        if (numberPage < firstPageShow) return;
+                        if (numberPage > lastPageShow) return;
+
                         let className = 'page-item'
 
                         if (numberPage === currentPage) className = className + " active"
@@ -54,6 +82,12 @@ const Pagination = ({ pageClick, initialPage = 1, totalRecords = 0, perPage = 5 
                             </li>
                         )
                     })
+                }
+                {
+                    lastPageShow !== countPages &&
+                    <li className="page-item" onClick={() => handleClick(countPages)}>
+                        <a className="page-link" tabIndex={-1}>...</a>
+                    </li>
                 }
                 <li className={`page-item ${!isNextEnable && "disable"}`} onClick={() => handleClick(currentPage + 1)}>
                     <a className="page-link">Proximo</a>
