@@ -27,6 +27,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             setTitle(category.title);
             setImageUrl(category.image_url);
             setId(category.id);
+            setDescription(category.description)
             setAvailable(category.available);
         }
     }, [category]);
