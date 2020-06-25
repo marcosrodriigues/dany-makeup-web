@@ -243,7 +243,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                 </legend>
                 <div className="col-sm-12">
                     <div className="form-group row">
-                        <label htmlFor="addressName" className="form-label col-sm-1">Nome:</label>
+                        <label htmlFor="addressName" className="form-label col-form-label col-sm-1">Nome:</label>
                         <div className="col-sm-11">
                             <input 
                                 type="text" 
@@ -258,7 +258,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                     </div>
 
                     <div className="form-group row">
-                        <label htmlFor="cep" className="form-label col-sm-1">CEP:</label>
+                        <label htmlFor="cep" className="form-label col-form-label col-sm-1">CEP:</label>
                         <div className="col-sm-2">
                             <InputMask 
                                 mask="99999-999"
@@ -271,7 +271,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                             />
                         </div>
 
-                        <label htmlFor="street" className="form-label col-sm-2">Logradouro:</label>
+                        <label htmlFor="street" className="form-label col-form-label col-sm-2">Logradouro:</label>
                         <div className="col-sm-7">
                             <input 
                                 type="text" 
@@ -285,7 +285,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                     </div>
 
                     <div className="form-group row">
-                        <label htmlFor="number" className="form-label col-sm-1">Nº:</label>
+                        <label htmlFor="number" className="form-label col-form-label col-sm-1">Nº:</label>
                         <div className="col-sm-2">
                             <input 
                                 type="text" 
@@ -297,7 +297,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                             />
                         </div>
 
-                        <label htmlFor="complement" className="form-label col-sm-2">Complemento:</label>
+                        <label htmlFor="complement" className="form-label col-form-label col-sm-2">Complemento:</label>
                         <div className="col-sm-3">
                             <input 
                                 type="text" 
@@ -309,7 +309,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                             />
                         </div>
 
-                        <label htmlFor="reference" className="form-label col-sm-1">Referência:</label>
+                        <label htmlFor="reference" className="form-label col-form-label col-sm-1">Referência:</label>
                         <div className="col-sm-3">
                             <input 
                                 type="text" 
@@ -323,7 +323,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                     </div>
 
                     <div className="form-group row">
-                        <label htmlFor="neighborhood" className="form-label col-sm-1">Bairro:</label>
+                        <label htmlFor="neighborhood" className="form-label col-form-label col-sm-1">Bairro:</label>
                         <div className="col-sm-2">
                             <input 
                                 type="text"
@@ -335,7 +335,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                             />
                         </div>
 
-                        <label htmlFor="city" className="form-label col-sm-2">Cidade:</label>
+                        <label htmlFor="city" className="form-label col-form-label col-sm-2">Cidade:</label>
                         <div className="col-sm-3">
                             <select 
                                 id="city" 
@@ -353,7 +353,7 @@ const FormClient = ({ client = { } as IClient, address = { } as IAddress }) => {
                             </select>
                         </div>
 
-                        <label htmlFor="uf" className="form-label col-sm-1">UF:</label>
+                        <label htmlFor="uf" className="form-label col-form-label col-sm-1">UF:</label>
                         <div className="col-sm-3">
                             <select 
                                 id="uf" 
