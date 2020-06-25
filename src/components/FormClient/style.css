@@ -1,0 +1,15 @@
+.form-client-box {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cecece;
+    border-radius: 5px;
+    margin-top: 16px;
+}
+
+.form-client-button-box {
+    width: 100%;
+    margin-top: 16px;
+    text-align: center;
+    justify-content: center;
+    float: center;
+}

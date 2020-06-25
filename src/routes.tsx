@@ -18,6 +18,8 @@ import EditPromotion from './pages/EditPromotion/Index';
 import Banners from './pages/Banners/Index';
 import NewBanner from './pages/NewBanner/Index';
 import EditBanner from './pages/EditBanner/Index';
+import Clients from './pages/Clients/Index';
+import EditClient from './pages/EditClient/Index';
 
 const Routes = () => {
     return (
@@ -39,6 +41,8 @@ const Routes = () => {
                 <Route component={Banners} path="/banners" exact />
                 <Route component={NewBanner} path="/banners/novo" exact />
                 <Route component={EditBanner} path="/banners/:id" exact />
+                <Route component={Clients} path="/clientes" exact />
+                <Route component={EditClient} path="/clientes/:id" exact />
             </Switch>
         </BrowserRouter>
     )
