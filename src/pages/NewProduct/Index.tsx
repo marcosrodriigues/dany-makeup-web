@@ -7,7 +7,7 @@ import FormProduct from '../../components/FormProduct/Index';
 const NovoProduto = () => {
     return (
         <div className="page">
-            <Header />
+            <Header current="produtos" />
 
             <div className="container">
                 <div className="content">

@@ -26,7 +26,7 @@ const EditClient = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="clientes" />
 
             <div className="container">
                 <div className="content">

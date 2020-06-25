@@ -6,7 +6,7 @@ import './style.css'
 const Home = () => {
     return (
         <div className="page">
-            <Header />
+            <Header current="" />
         </div>
     )
 }

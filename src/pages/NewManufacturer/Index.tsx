@@ -7,7 +7,7 @@ import FormManufacturer from '../../components/FormManufacturer/Index';
 const NewManufacturer = () => {
     return (
         <div className="page">
-            <Header />
+            <Header current="fabricantes" />
 
             <div className="container">
                 <div className="content">

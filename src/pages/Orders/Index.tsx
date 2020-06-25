@@ -12,20 +12,19 @@ import api from '../../services/api';
 import BoxFilter from '../../components/BoxFilter/Index';
 import CustomTable from '../../components/CustomTable/Index';
 
-const Categorys = () => {
-    const [categorys, setCategorys] = useState<ICategory[]>([]);
+const Orders = () => {
+    const [orders, setOrders] = useState([]);
 
-    const [searchTitle, setSearchTitle] = useState("");
+    const [search, setSearch] = useState("");
 
-    //const [pagination, setPagination] = useState({
     const [currentPage, setCurrentPage] = useState(1);
     const [limitPerPage, setLimitPerPage] = useState(5);
     const [count, setCount] = useState(0);
     const [offset, setOffset] = useState(0);
     const [start, setStart] = useState(0);
-    const [end, setEnd] = useState(0);    //});
+    const [end, setEnd] = useState(0);    
 
-    const [dataTable, setDataTable] = useState<{ id, image_url, name, qtd_produtos }[]>([]);
+    const [dataTable, setDataTable] = useState([]);
 
     useEffect(() => {
         init();
@@ -45,32 +44,31 @@ const Categorys = () => {
     useEffect(() => {
         let tables : any = [];
 
-        categorys && categorys.map(category => {
-            let qtd_produtos = category.qtd_produtos ? category.qtd_produtos : 0;
+        orders && orders.map((order: any) => {
             const n = {
-                id: category.id,
-                image_url: category.image_url,
-                name: category.title,
-                qtd_produtos: qtd_produtos
+                id: order.id,
+                client: order.client,
+                products: order.products,
+                value: order.value
             };
             tables.push(n);
-            return category;
+            return order;
         })
 
         setDataTable(tables);
-    }, [categorys])
+    }, [orders])
 
     async function init() {
         const params = {
-            title: searchTitle,
+            search: search,
             page: currentPage,
             limit: limitPerPage
         }
 
-        const response = await api.get('categorys', { params })
-        const categorias = response.data;
+        const response = await api.get('orders', { params })
+        const orders = response.data;
 
-        setCategorys(categorias);
+        setOrders(orders)
         setCount(Number(response.headers['x-total-count']));
         setOffset(limitPerPage * (currentPage - 1));
     }
@@ -91,15 +89,12 @@ const Categorys = () => {
 
     return (
         <div className="page">
-            <Header current="categorias" />
+            <Header current="pedidos" />
 
             <div className="container">
                 <div className="content">
                     <div className="header">
-                        <h1 className="header-title">Categorias</h1>
-                        <div className="search">
-                            <Button variant="dark"><Link className="custom-link" to="/categorias/novo" >Nova categoria</Link></Button>
-                        </div>
+                        <h1 className="header-title">Pedidos</h1>
                     </div>
 
                     <div className="box-filter bg-dark">
@@ -108,9 +103,9 @@ const Categorys = () => {
                             onChangeLimitPerPage={handleChangeLimitPerPage}
                             onSubmit={handleSubmitFilterForm}
                             fieldProps={[{
-                                name: 'Título',
-                                value: searchTitle,
-                                setValue: setSearchTitle
+                                name: 'Cliente, produto, categoria, fabricante...',
+                                value: search,
+                                setValue: setSearch
                             }]}
                         />
                     </div>
@@ -121,10 +116,10 @@ const Categorys = () => {
 
                     <div className="box-table table-responsive">
                         <CustomTable
-                            headers={["#", "Imagem", "Título", "Nº Produtos"]}
+                            headers={["#", "Cliente", "Produtos", "Valor"]}
                             array={dataTable}
-                            route="categorias"
-                            routeApi="categorys"
+                            route="pedidos"
+                            routeApi="orders"
                             onRemove={init}
                             paginationProps={{ 
                                 click: handlePageClick, 
@@ -141,4 +136,4 @@ const Categorys = () => {
     )
 }
 
-export default Categorys;
+export default Orders;

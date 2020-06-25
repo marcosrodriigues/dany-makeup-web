@@ -91,7 +91,7 @@ const Manufacturers = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="fabricantes" />
 
             <div className="container">
                 <div className="content">

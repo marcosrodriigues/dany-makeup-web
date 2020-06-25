@@ -92,7 +92,7 @@ const Produtos = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="produtos" />
 
             <div className="container">
                 <div className="content">

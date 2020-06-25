@@ -2,3 +2,7 @@
     width: 100%;
     background-color: #343a40;
 }
+
+.link-active {
+    border-bottom: 5px solid #d2ae6c;
+}

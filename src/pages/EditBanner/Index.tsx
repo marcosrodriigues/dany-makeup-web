@@ -21,7 +21,7 @@ const EditBanner = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="banners" />
 
             <div className="container">
                 <div className="content">

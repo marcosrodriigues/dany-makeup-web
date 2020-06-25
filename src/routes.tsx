@@ -20,6 +20,7 @@ import NewBanner from './pages/NewBanner/Index';
 import EditBanner from './pages/EditBanner/Index';
 import Clients from './pages/Clients/Index';
 import EditClient from './pages/EditClient/Index';
+import Orders from './pages/Orders/Index';
 
 const Routes = () => {
     return (
@@ -43,9 +44,11 @@ const Routes = () => {
                 <Route component={EditBanner} path="/banners/:id" exact />
                 <Route component={Clients} path="/clientes" exact />
                 <Route component={EditClient} path="/clientes/:id" exact />
+                <Route component={Orders} path="/pedidos" exact />
             </Switch>
         </BrowserRouter>
     )
 }
 
 export default Routes;
+

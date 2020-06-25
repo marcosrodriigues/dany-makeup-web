@@ -7,7 +7,7 @@ import FormBanner from '../../components/FormBanner/Index';
 const NewBanner = () => {
     return (
         <div className="page">
-            <Header />
+            <Header current="banners" />
 
             <div className="container">
                 <div className="content">

@@ -7,7 +7,7 @@ import FormPromotion from '../../components/FormPromotion/Index';
 const NewPromotion = () => {
     return (
         <div className="page">
-            <Header />
+            <Header current="promocoes" />
 
             <div className="container">
                 <div className="content">

@@ -36,7 +36,7 @@ const EditPromotion = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="promocoes" />
 
             <div className="container">
                 <div className="content">

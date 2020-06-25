@@ -21,7 +21,7 @@ const EditCategory = () => {
 
     return (
         <div className="page">
-            <Header />
+            <Header current="categorias" />
 
             <div className="container">
                 <div className="content">
