@@ -64,7 +64,9 @@ const Promotions = () => {
                 id: promotion.id,
                 image: promotion.mainImage,
                 name: promotion.name,
-                products: products.map(prod => prod.name).join(', ')
+                products: products.map(prod => prod.name).join(', '),
+                originalValue: promotion.originalValue,
+                promotionValue: promotion.promotionValue,
             }
 
             tables.push(data);
@@ -82,7 +84,6 @@ const Promotions = () => {
     }
 
     function handlePageClick(page: number) {
-        console.log("AQUII!", page)
         setCurrentPage(page);
     }
 
@@ -116,7 +117,7 @@ const Promotions = () => {
 
                     <div className="box-table table-responsive">
                         <CustomTable
-                            headers={['#', 'Imagem', 'Nome', 'Produtos']}
+                            headers={['#', 'Imagem', 'Nome', 'Produtos', 'R$ Original', 'R$ Promocional']}
                             route='promocoes'
                             routeApi='promotions'
                             onRemove={init}

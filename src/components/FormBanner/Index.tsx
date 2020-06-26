@@ -146,6 +146,7 @@ const FormBanner = ({ banner = { } as IBanner }) => {
                             timeFormat="HH:mm"
                             locale="pt"
                             timeIntervals={30}
+                            minDate={start}
                             timeCaption="Hora"
                             dateFormat="dd/MM/yyyy hh:mm aa"
                             className="form-control col-sm-12"

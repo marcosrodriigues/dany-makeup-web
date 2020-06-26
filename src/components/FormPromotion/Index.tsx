@@ -113,7 +113,6 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
             sum_value = sum_value + Number(prod.value);
         })
         setOriginalValue(sum_value);
-        setPromotionValue(sum_value);
     }, [products])
 
     function getOnlyProducts(categorys: any[]) {
@@ -244,9 +243,15 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
 
     useEffect(() => {
         if (discountType === "R$") {
-            setPromotionValue(originalValue - discount);
+            if (discount <= originalValue)
+                setPromotionValue(originalValue - discount);
+            else
+                alert('Valor de desconto excete o máximo.')
         } else if (discountType === "%") {
-            setPromotionValue(originalValue - (originalValue * (discount / 100)))
+            if (discount <= 100)
+                setPromotionValue(originalValue - (originalValue * (discount / 100)))
+            else
+                alert('Valor de desconto excete o máximo.')
         }
     }, [discountType, discount])
 
