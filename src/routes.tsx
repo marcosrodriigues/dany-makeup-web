@@ -21,12 +21,18 @@ import EditBanner from './pages/EditBanner/Index';
 import Clients from './pages/Clients/Index';
 import EditClient from './pages/EditClient/Index';
 import Orders from './pages/Orders/Index';
+import Stores from './pages/Stores/Index';
+import NewStore from './pages/NewStore/Index';
+import EditStore from './pages/EditStore/Index';
 
 const Routes = () => {
     return (
         <BrowserRouter>
             <Switch>
                 <Route component={Home} path="/" exact />
+                <Route component={Stores} path="/lojas" exact />
+                <Route component={NewStore} path="/lojas/novo" exact  />
+                <Route component={EditStore} path="/lojas/:id" exact />
                 <Route component={Manufacturers} path="/fabricantes" exact />
                 <Route component={NewManufacturer} path="/fabricantes/novo" exact  />
                 <Route component={EditManufacturer} path="/fabricantes/:id" exact />
