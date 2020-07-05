@@ -38,7 +38,6 @@ const Produtos = () => {
 
         api.get('products', { params }).then(async response => {
             const { data } = response;
-
             setProducts(data);
             setCount(Number(response.headers["x-total-count"]));
             setOffset(limitPerPage * (currentPage - 1));
@@ -65,7 +64,7 @@ const Produtos = () => {
             })
             const n = {
                 id: product?.id,
-                image_url: product?.mainImage,
+                image_url: product?.image_url,
                 name: product?.name,
                 manufacturer: product?.manufacturer.name,
                 categorys: categorias?.join(', ')
@@ -73,7 +72,7 @@ const Produtos = () => {
             tables.push(n);
             return product;
         })
-
+        console.log(tables)
         setDataTable(tables);
     }, [products])
 

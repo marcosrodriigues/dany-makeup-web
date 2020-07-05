@@ -14,7 +14,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     const [description, setDescription] = useState<string>("");
     const [imageUrl, setImageUrl] = useState<string>("");
     const [id, setId] = useState<number>(0);
-    const [available, setAvailable] = useState<boolean>(false);
+    //const [available, setAvailable] = useState<boolean>(false);
     
     const [file, setFile] = useState<File>({} as File);  
 
@@ -28,7 +28,6 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             setImageUrl(category.image_url);
             setId(category.id);
             setDescription(category.description)
-            setAvailable(category.available);
         }
     }, [category]);
 
@@ -55,7 +54,6 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
         data.append('id', String(id));
         data.append("title", title);
         data.append("description", description);
-        data.append('available', String(available));
         
         data.append('image', file);
 
@@ -107,18 +105,6 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                             value={description} 
                         />
                     </Col>
-                </Form.Group>
-                <Form.Group as={Row} className="w-100">
-                    <div className="col-sm-4"></div>
-                    <div className="col-sm-8">
-                        <Form.Check id="disponivel" type="checkbox">
-                            <FormCheck.Input
-                                onChange={() => setAvailable(!available)}
-                                checked={available} 
-                            />
-                            <Form.Check.Label>Categoria disponível</Form.Check.Label>
-                        </Form.Check>
-                    </div>
                 </Form.Group>
                 <Form.Group as={Row} controlId="button" className="w-100">
                     <Button variant="dark" className="w-100" type="submit" >Salvar</Button>

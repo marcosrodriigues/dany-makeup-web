@@ -3,7 +3,8 @@ import ICategory from "./ICategory";
 import IProductImages from "./IProductImages";
 
 export default interface IPropsFormProduct {
-    product?: IProduct,
+    product?: any,
     categorys?: ICategory[],
-    images?: IProductImages[]
+    images?: IProductImages[],
+    estoques?: any[]
 }

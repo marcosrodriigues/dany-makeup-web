@@ -14,4 +14,5 @@ export default interface IProduct {
     mainImage: string,
     images: string[],
     manufacturer_id: number,
+    image_url?: string,
 }

@@ -11,23 +11,31 @@ import CurrencyInput from 'react-currency-input';
 import IManufacturer from '../../interface/IManufacturer';
 import IFile from '../../interface/IFile';
 import Thumbnails from '../Thumbnails/Index';
-import { getFilename } from '../../util/util';
+import { getFilename, buildFormData, isDataValid } from '../../util/util';
 
 
-const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefined, images = undefined }) => {
+const FormProduto = ({
+    product, 
+    categorys = undefined, 
+    images = undefined,
+    estoques = undefined
+} : IPropsFormProduct ) => {
 
-    const [id, setId] = useState<number>(0);
-    const [name, setName] = useState('');
-    const [shortDescription, setShortDescription] = useState('');
-    const [fullDescription, setFullDescription] = useState('');
-    const [value, setValue] = useState<number>(0.0);    
-    const [amount, setAmount] = useState<number>(0);
-    const [available, setAvailable] = useState(false);
+    const [formData, setFormData] = useState({
+        id: 0,
+        name: '123',
+        short_description: '123',
+        full_description: '123',
+        value: 49.90,
+        amount: 0,
+        image_url: ''
+    })
+
+    const [stocks, setStocks] = useState<any>([]);
     const [productCategorys, setProductCategorys] = useState([]);  
     const [productManufacturer, setProductManufacturer] = useState<number>(0);  
 
     const [files, setFiles] = useState<File[]>([]);  
-    const [mainImage, setMainImage] = useState<string>("");
     const [mainImageUri, setMainImageUri] = useState<string>("");
     const [productImages, setProductImages] = useState<IFile[]>([]);
 
@@ -40,16 +48,18 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
     
     useEffect(() => {
         if (product) {
-            setId(product.id);
-            setName(product.name)
-            setShortDescription(product.shortDescription);
-            setFullDescription(product.fullDescription);
-            setValue(product.value);
-            setAmount(product.amount);
-            setAvailable(product.available);
-            setMainImage(product.mainImage);
-            setMainImageUri(product.mainImage);
+            setFormData({
+                id: product.id,
+                name:  product.name,
+                short_description:  product.short_description,
+                full_description:  product.full_description,
+                value: product.value,
+                amount: product.amount,
+                image_url: String(product.image_url),
+            })
             setProductManufacturer(product.manufacturer_id);
+            setMainImageUri(product.image_url);
+            
         }
         
         if (categorys) {
@@ -69,7 +79,12 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
             })
             setProductImages(img_urls);
         }
-    }, [product, categorys, images])
+
+        if(estoques) {
+            setStocks(estoques);
+            console.log(estoques);
+        }
+    }, [product, categorys, images, estoques])
 
     useEffect(() => {
         const params = {
@@ -85,8 +100,21 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
                 const { data } = response;
                 setFabricantes(data);
             })
+
+            api.get('stores', { params }).then(response => {
+                const { data } = response;
+
+                const stocks = data.map((d:any) => {
+                    return {
+                        store_id: d.id,
+                        name: d.name,
+                        amount: 0
+                    }
+                })
+                setStocks(stocks);
+            })
         } catch (err) {
-            alert('Erro ao preencher categorias e fabricantes: ' + err);
+            alert('Erro ao carregar dados iniciais: ' + err);
             console.log(err);
         }
         
@@ -108,51 +136,38 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
         setShowError(false);
         setErrors([]);
 
-        let error_msg : string[] = [];
-
-        if (files.length === 0 && productImages.length === 0) {
-            error_msg.push("Insira pelo menos uma imagem.");
+        if (!isDataValid(formData)) {
+            setErrors(["Campos obrigatórios não preenchidos"]);
             setShowError(true);
-        }
-        if (mainImage === "") {
-            error_msg.push("Escolha a imagem principal.")
-            setShowError(true);
-        }
-        if (productManufacturer === 0) {
-            error_msg.push("Selecione o fabricante do produto.")
-            setShowError(true);
+            return;
         }
 
-        if (error_msg.length > 0) {
-            setErrors(error_msg);
-            return
-        };
+        const prod = {
+            ...formData,
+            categorys: productCategorys.join(','),
+            manufacturer_id: productManufacturer
+        }
 
         const data = new FormData();
+        buildFormData(data, prod);
 
-        data.append('id', String(id));
-        data.append('name', name);
-        data.append('shortDescription', shortDescription);
-        data.append('fullDescription', fullDescription);
-        data.append('value', String(value)); 
-        data.append('amount', String(amount)); 
-        data.append('available', String(available)); 
-        data.append('categorys', productCategorys.join(','));
-        data.append('mainImage', mainImage);
-        data.append('manufacturer_id', String(productManufacturer));
+        for(let i = 0; i < files.length; i++)
+            data.append('images[]', files[i]);
 
-        if(files.length > 0)
-            for(let i = 0; i < files.length; i++)
-                data.append('images[]', files[i]);
+        for(let i = 0; i < productImages.length; i++)
+            if (!productImages[i].url.startsWith('blob'))
+                data.append('url_images[]', productImages[i].url);
 
-        if (productImages)
-            for(let i = 0; i < productImages.length; i++) {
-                if (!productImages[i].url.startsWith('blob'))
-                    data.append('url_images[]', productImages[i].url);
-            }
+        for (let i = 0; i < stocks.length; i++) {
+            if(stocks[i].id && stocks[i].id !== 0)
+                data.append('stock_id[]', stocks[i].id)
+
+            data.append('store_id[]', stocks[i].store_id)
+            data.append('amounts[]', stocks[i].amount)
+        }
 
         try {
-            if (id !== 0) await api.put('products', data);
+            if (formData.id !== 0) await api.put('products', data);
             else await api.post('products', data);
 
             setShowSucess(true)
@@ -177,136 +192,208 @@ const FormProduto : React.FC<IPropsFormProduct> = ({ product, categorys = undefi
 
     function handleSelectedMainImage(url: string, filename: string) {
         setMainImageUri(url);
-        setMainImage(filename);
+        setFormData({
+            ...formData,
+            image_url: filename
+        });
     }
 
     function handleCurrencyInputChange(maskedvalue: string, floatvalue: number, event: ChangeEvent) {
-        setValue(floatvalue);
+        setFormData({...formData, value: floatvalue});
     }
+
+    function handleFormValue(event) {
+        const { name, value } = event.target;
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    }
+
+    function handleStock(value, store_id) {
+        const data = stocks.map(stock => {
+            if (stock.store_id === store_id) {
+                return {
+                    ...stock,
+                    amount: Number(value)
+                }
+            }
+
+            return stock;
+        })
+        setStocks(data);
+    }
+
+    useEffect(() => {
+        let amount = 0;
+        stocks.map(s => amount += s.amount);
+        setFormData({
+            ...formData,
+            amount
+        })
+    }, [stocks])
     
     return (
         <Form onSubmit={handleSubmit}  className="form row">
-            <div className="images col-sm-6">
-                <div className="box-images">
+            <div className="alerts">
+                <CustomAlert visible={showSucess} type="success" />
+                <CustomAlert visible={showError} type="danger" error={errors} />
+            </div>
+
+            <div className="row col-sm-12 box">
+                <legend>Produto:</legend>
+                <div className="col-sm-6">
+                    <div className="form-group row">
+                        <label htmlFor="name" className="form-label col-form-label col-sm-4">Nome do produto:*</label>
+                        <div className="col-sm-8">
+                            <input type="text" 
+                                className="form-control"
+                                name="name"
+                                id="name"
+                                placeholder="Nome do produto"
+                                onChange={handleFormValue}
+                                value={formData.name}
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label htmlFor="manufacturer" className="form-label col-form-label col-sm-4">
+                            Fabricante:*
+                        </label>
+                        <div className="col-sm-8">
+                            <select className="form-control" 
+                                id="manufacturer" 
+                                name="manufacturer"
+                                value={productManufacturer}
+                                onChange={event => setProductManufacturer(Number(event.target.value))} 
+                            >
+                                <option disabled value={0}>SELECIONE O FABRICANTE</option>
+                                {fabricantes.map(fab => (
+                                    <option key={fab.id} value={fab.id}>{fab.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                        <label htmlFor="categoria" className="col-form-label col-sm-4">
+                            Categorias:*
+                        </label>
+                        <div className="col-sm-8">
+                            <select className="form-control" 
+                                id="categoria" 
+                                multiple
+                                value={productCategorys}
+                                onChange={handleSelect} 
+                            >
+                                {categorias.map(cat => (
+                                    <option key={cat.id} value={cat.id}>{cat.title}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-sm-6">
+                    <div className="form-group row">
+                        <label htmlFor="valor" className="col-form-label col-sm-4">
+                            Valor:*
+                        </label>
+                        <div className="col-sm-8">
+                            <CurrencyInput 
+                                value={formData.value}
+                                prefix="R$ "
+                                onChange={handleCurrencyInputChange}
+                                className="form-control"
+                                id="valor"
+                            />
+                        </div>
+                    </div>
+                    <div className="form-group row">
+                    <label htmlFor="short_description" className="col-form-label col-sm-4">
+                        Breve descrição:*
+                    </label>
+                    <div className="col-sm-8">
+                        <input type="text" 
+                            className="form-control"
+                            name="short_description"
+                            id="short_description"
+                            placeholder="Breve descrição do produto"
+                            onChange={handleFormValue}
+                            value={formData.short_description}
+                        />
+                    </div>
+                </div>
+                <div className="form-group row">
+                    <label htmlFor="full_description" className="col-form-label col-sm-4">
+                        Descrição completa:*
+                    </label>
+
+                    <div className="col-sm-8">
+                        <textarea
+                            className="form-control"
+                            rows={4}
+                            name="full_description"
+                            id="full_description"
+                            placeholder="Descrição completa do produto"
+                            onChange={handleFormValue}
+                            value={formData.full_description}
+                        />
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div className="row col-sm-12 box">
+                <legend>Estoque: - {formData.amount} unidade{formData.amount > 1 && 's'}</legend>
+                
+                <div className="col-sm-12">
+                    <div className="form-group row">
+                    
+                    {stocks && stocks.map((stock, index) => (
+                        <div className="col-sm-6 row">
+                            <label htmlFor={`store_${index}`} className="form-label col-form-label col-sm-4"
+                                style={index > 1 ? { marginTop:  8} : {}}
+                                ><strong>{stock.name}</strong></label>
+                            <div className="col-sm-8">
+                                <input type="number"
+                                    style={index > 1 ? { marginTop:  8} : {}}
+                                    className="form-control"
+                                    name={`store_${index}`}
+                                    id={`store_${index}`}
+                                    placeholder="0"
+                                    onChange={event => handleStock(event.target.value, stock.store_id)}
+                                    value={stock.amount}
+                                    />
+                            </div>
+                        </div>
+                    ))}
+                    </div>
+                </div>
+            </div>
+                
+            <div className="row col-sm-12 box">
+                <legend>Imagens:</legend>
+                <div className="images col-sm-6">
                     <Dropzone 
                         onFileUploaded={handleDrop} 
                         selected={mainImageUri}
                     />
+                </div>
+                <div className="thumbnails col-sm-6">
                     <Thumbnails
                         onSelectedImage={handleSelectedMainImage}
                         setListImages={setProductImages}
                         list_images={productImages}
                         selected={mainImageUri}
+                        messageBox={false}
                     />
                 </div>
             </div>
-            <div className="info col-sm-6">
-                <div className="alerts">
-                    <CustomAlert visible={showSucess} type="success" />
-                    <CustomAlert visible={showError} type="danger" error={errors} />
+
+
+            <div className="col-sm-12 mt16 mb16">
+                <div className="w-100">
+                    <button type="submit" className="btn btn-dark w-100">CADASTRAR</button>
                 </div>
-
-                <Form.Group as={Row} controlId="name" className="w-100">
-                    <Form.Label column sm="4">Nome do produto: </Form.Label>
-                    <Col sm="8">
-                        <Form.Control placeholder="Nome do produto"
-                            onChange={(event) => setName(event.target.value)} 
-                            value={name} 
-                        />
-                    </Col>
-                </Form.Group>
-                <Form.Group as={Row} controlId="fabricante" className="w-100">
-                    <label htmlFor="fabricante" className="form-label col-sm-4">
-                        Fabricante:
-                    </label>
-                    <div className="col-sm-8">
-                        <select className="form-control" 
-                            id="fabricantes" 
-                            value={productManufacturer}
-                            onChange={event => setProductManufacturer(Number(event.target.value))} 
-                        >
-                            <option disabled value={0}>SELECIONE O FABRICANTE</option>
-                            {fabricantes.map(fab => (
-                                <option key={fab.id} value={fab.id}>{fab.name}</option>
-                            ))}
-                        </select>
-                    </div>
-                </Form.Group>
-                <Form.Group as={Row} controlId="categoria" className="w-100">
-                    <label htmlFor="categoria" className="form-label col-sm-4">
-                        Categorias:
-                    </label>
-                    <div className="col-sm-8">
-                        <select className="form-control" 
-                            id="categoria" 
-                            multiple
-                            value={productCategorys}
-                            onChange={handleSelect} 
-                        >
-                            {categorias.map(cat => (
-                                <option key={cat.id} value={cat.id}>{cat.title}</option>
-                            ))}
-                        </select>
-                    </div>
-                </Form.Group>
-                <Form.Group as={Row} controlId="shortDescription" className="w-100">
-                    <Form.Label column sm="4">Descrição curta: </Form.Label>
-                    <Col sm="8">
-                        <Form.Control placeholder="Uma descrição curta do produto"
-                            onChange={(event) => setShortDescription(event.target.value)} 
-                            value={shortDescription} 
-                        />
-                    </Col>
-                </Form.Group>
-                <Form.Group as={Row} controlId="fullDescription" className="w-100">
-                    <Form.Label column sm="4">Descrição completa: </Form.Label>
-                    <Col sm="8">
-                        <Form.Control as="textarea" rows={4} placeholder="Descrição completa do produto"
-                            onChange={(event) => setFullDescription(event.target.value)} 
-                            value={fullDescription} 
-                        />
-                    </Col>
-                </Form.Group>
-                <Form.Group as={Row} controlId="valor" className="w-100">
-                    <Form.Label column sm="4">Valor: </Form.Label>
-                    <Col sm="8">
-                        <CurrencyInput 
-                            value={value}
-                            prefix="R$ "
-                            onChange={handleCurrencyInputChange}
-                            className="form-control"
-                            id="valor"
-                        />
-                    </Col>
-                </Form.Group>
-                <Form.Group as={Row} controlId="qtd" className="w-100">
-                    <Form.Label column sm="4">Quantidade disponível: </Form.Label>
-                    <Col sm="8">
-                        <Form.Control type="number" placeholder="0"
-                            onChange={(event) => setAmount(Number(event.target.value))}
-                            value={amount}
-                        >
-                        </Form.Control>
-                    </Col>
-                </Form.Group>
-
-                <Form.Group as={Row} className="w-100">
-                    <div className="col-sm-4"></div>
-                    <div className="col-sm-8">
-                        <div className="form-check">
-                            <input 
-                                type="checkbox" 
-                                id="disponivel" 
-                                checked={available}
-                                onChange={() => setAvailable(!available)}
-                                className="form-check-input" />
-                            <label htmlFor="disponivel">Produto disponível</label>
-                        </div> 
-                    </div>
-                </Form.Group>
-                <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" type="submit" >Cadastrar</Button>
-                </Form.Group>
             </div>
         </Form>
     )

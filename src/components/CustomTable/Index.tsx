@@ -11,8 +11,14 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import ConfirmAlert from '../ConfirmAlert/Index';
 
-const CustomTable = ({ headers, array , route = "", routeApi = "", paginationProps, onRemove = () => { } }) => {
-    
+const CustomTable = ({ 
+    headers, 
+    array , 
+    route = "", 
+    routeApi = "", 
+    paginationProps, 
+    onRemove = () => { } 
+}) => {
     
     async function handleRemoveClick(id: number, name: string = "") {
         if (id === 0 || route === "") return;
@@ -49,7 +55,7 @@ const CustomTable = ({ headers, array , route = "", routeApi = "", paginationPro
     }
 
     return (
-        <table className="table table-dark table-striped table-hover">
+        <table className="table table-responsive table-dark table-striped table-hover">
             <thead>
                 <tr>
                     {

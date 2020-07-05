@@ -9,7 +9,6 @@ import './style.css';
 import api from '../../services/api';
 
 import CustomTable from '../../components/CustomTable/Index';
-import IDataTableManufacturer from '../../interface/IDataTableManufacturers';
 import BoxFilter from '../../components/BoxFilter/Index';
 import IStore from '../../interface/IStore';
 
@@ -114,11 +113,11 @@ const Stores = () => {
                         />
                     </div>
 
-                    <p className="right">
-                        Exibindo de {start} até {end} de {count} registros no total.
-                    </p>
-
                     <div className="box-table table-responsive">
+                        <p className="right">
+                            Exibindo de {start} até {end} de {count} registros no total.
+                        </p>
+
                         <CustomTable
                             headers={["#", "Imagem", "Nome", "Descrição"]}
                             array={dataTable}

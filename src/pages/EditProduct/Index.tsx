@@ -14,6 +14,7 @@ const EditProduct = () => {
     const [product, setProduct] = useState<IProduct>({} as IProduct);
     const [categorys, setCategorys] = useState<ICategory[]>([]);
     const [images, setImages] = useState<IProductImages[]>([]);
+    const [stocks, setStocks] = useState<any[]>([]);
 
     useEffect(() => {
         if (id) {
@@ -22,12 +23,14 @@ const EditProduct = () => {
                     const { 
                         product, 
                         categorys, 
-                        images 
+                        images ,
+                        stock
                     } = response.data;
     
                     setProduct(product);
                     setCategorys(categorys);
                     setImages(images);
+                    setStocks(stock);
                 })
             } catch (err) {
                 alert('Não foi possível carregar o produto');
@@ -52,6 +55,7 @@ const EditProduct = () => {
                             product={product} 
                             categorys={categorys}
                             images={images}    
+                            estoques={stocks}
                         />
                     </div>
                 </div>
