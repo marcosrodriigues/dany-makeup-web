@@ -62,7 +62,7 @@ const Promotions = () => {
         promotions && promotions.map(({ promotion, products }) => {
             const data = {
                 id: promotion.id,
-                image: promotion.mainImage,
+                image: promotion.image_url,
                 name: promotion.name,
                 products: products.map(prod => prod.name).join(', '),
                 originalValue: promotion.originalValue,

@@ -10,6 +10,9 @@ export function buildFormData(formData, data, parentKey: any = undefined) {
         Object.keys(data).forEach(key => {
             buildFormData(formData, data[key], parentKey ? `${parentKey}[${key}]` : key);
         });
+    } else if (data instanceof Date) {
+        const value = data == null ? '' : data;
+        formData.append(parentKey, String(value));
     } else {
         const value = data == null ? '' : data;
         formData.append(parentKey, value);

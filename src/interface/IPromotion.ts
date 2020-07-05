@@ -9,7 +9,7 @@ interface IPromotion {
     discountType: string
     discount: number
     promotionValue: number
-    mainImage: string
+    image_url: string
     images: string[],
     products: IProduct[]
 }

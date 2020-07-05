@@ -16,26 +16,27 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/esm/locale/pt-BR'
 import { FaDownload } from 'react-icons/fa';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { getFilename } from '../../util/util';
+import { getFilename, buildFormData } from '../../util/util';
 import IPromotion from '../../interface/IPromotion';
 registerLocale('pt', pt)
 
 const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], promotionImages = [] }) => {
 
-    const [id, setId] = useState(0);
-    const [name, setName] = useState("");
+    const [formPromotion, setFormPromotion] = useState({
+        id: 0,
+        name: '',
+        start: new Date(),
+        end: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000),
+        originalValue: 0.0,
+        promotionValue: 0.0,
+        discount: 0.0,
+        image_url: '',
+        discountType: '%'
+    })
 
-    const [start, setStart] = useState(new Date());
-    const [end, setEnd] = useState(new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000));
-
-    const [originalValue, setOriginalValue] = useState(0);
-    const [promotionValue, setPromotionValue] = useState(0);
     const [products, setProducts] = useState<any[]>([]);
-    const [discount, setDiscount] = useState(0);
     const [images, setImages] = useState<IFile[]>([]);
-    const [mainImage, setMainImage] = useState("");
     const [mainImageUri, setMainImageUri] = useState<string>("");
-    const [discountType, setDiscountType] = useState<string>("%");
     
     const [files, setFiles] = useState<File[]>([]);
 
@@ -54,23 +55,24 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
 
     useEffect(() => {
         if (promotion.id !== undefined){
-            setId(promotion.id);
-            setName(promotion.name);
-            setStart(new Date(promotion.start));
-            setEnd(new Date(promotion.end));
-            setOriginalValue(Number(promotion.originalValue));
-            setDiscountType(promotion.discountType);
-            setDiscount(promotion.discount);
-            setPromotionValue(promotion.promotionValue);
-            setMainImage(promotion.mainImage);
-            setMainImageUri(promotion.mainImage);
+            setFormPromotion({
+                id: promotion.id,
+                name: promotion.name,
+                start: new Date(promotion.start),
+                end: new Date(promotion.end),
+                originalValue: Number(promotion.originalValue),
+                promotionValue: promotion.promotionValue,
+                discount: promotion.discount,
+                image_url: promotion.image_url,
+                discountType: promotion.discountType,
+            })
+            setMainImageUri(promotion.image_url);
         }
     }, [promotion]);
 
     useEffect(() => {
         if (promotionProducts.length > 0) {
             setProducts(promotionProducts);
-
             const ids = promotionProducts.map((prod: any) => prod.id);
             setIdProducts(ids);
         }
@@ -112,7 +114,10 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         products.map(prod => {
             sum_value = sum_value + Number(prod.value);
         })
-        setOriginalValue(sum_value);
+        setFormPromotion({
+            ...formPromotion,
+            originalValue: sum_value,
+        })
     }, [products])
 
     function getOnlyProducts(categorys: any[]) {
@@ -135,16 +140,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         setErrors([]);
         
         const data = new FormData();
-
-        data.append('id', String(id));
-        data.append('name', name);
-        data.append('start', String(start));
-        data.append('end', String(end));
-        data.append('originalValue', String(originalValue));
-        data.append('discountType', discountType);
-        data.append('discount', String(discount));
-        data.append('promotionValue', String(promotionValue));
-        data.append('mainImage', mainImage);
+        data.append('promotion', JSON.stringify(formPromotion));
 
         const products_id = products.map(prod => prod.id).join(',');
         data.append('products', products_id);
@@ -159,7 +155,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         }
 
         try {
-            if (id !== 0) await api.put('promotions', data);
+            if (formPromotion.id !== 0) await api.put('promotions', data);
             else await api.post('promotions', data);
 
             setShowSucess(true);
@@ -199,10 +195,6 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         setProducts(selected_products)
     }
 
-    function handlePromotionValue(maskedvalue: string, floatvalue: number) {
-        setPromotionValue(floatvalue);
-    }
-
     function handleFileUploads(uploadeds: IFile[]) {
         const uploaded_images= images;
         const uploaded_files = files;
@@ -217,7 +209,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
     }
 
     async function handleClickImportImageButton(id: number) {
-        const response = await api.get(`product_images/${id}`);
+        const response = await api.get(`images/product/${id}`);
         const images_url: any = response.data;
 
         const imported_files = images_url.map(img => ({ file: { name: getFilename(img.url) } as File, url: img.url }))
@@ -238,22 +230,43 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
 
     function handleMainSelectedImage(url: string, filename: string) {
         setMainImageUri(url);
-        setMainImage(filename);
+        setFormPromotion({
+            ...formPromotion,
+            image_url: filename
+        });
     }
 
     useEffect(() => {
+        const discountType = formPromotion.discountType;
+        const discount = formPromotion.discount;
+        const originalValue = formPromotion.originalValue;
+
         if (discountType === "R$") {
             if (discount <= originalValue)
-                setPromotionValue(originalValue - discount);
+                setFormPromotion({
+                    ...formPromotion,
+                    promotionValue: originalValue - discount
+                })
             else
                 alert('Valor de desconto excete o máximo.')
         } else if (discountType === "%") {
             if (discount <= 100)
-                setPromotionValue(originalValue - (originalValue * (discount / 100)))
+                setFormPromotion({
+                    ...formPromotion,
+                    promotionValue: originalValue - (originalValue * (discount / 100))
+                })
             else
                 alert('Valor de desconto excete o máximo.')
         }
-    }, [discountType, discount])
+    }, [formPromotion.discountType, formPromotion.discount, formPromotion.originalValue])
+
+    function handleFormPromotion(e) {
+        const { name, value } = e.target;
+        setFormPromotion({
+            ...formPromotion,
+            [name]: value
+        })
+    }
 
     return (
         <form onSubmit={handleSubmit} encType="multipart/form-data" className="form row">
@@ -272,8 +285,9 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                 id="name" 
                                 type="text" 
                                 className="form-control"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)} 
+                                value={formPromotion.name}
+                                name="name"
+                                onChange={handleFormPromotion} 
                             />
                         </div>
                     </div>
@@ -282,8 +296,8 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                         <div className="col-sm-3">
                             <DatePicker
                                 id="start"
-                                selected={start}
-                                onChange={(date: Date) => setStart(date)}
+                                selected={formPromotion.start}
+                                onChange={(date: Date) => setFormPromotion({...formPromotion, start: date})}
                                 showTimeSelect
                                 timeFormat="HH:mm"
                                 locale="pt"
@@ -299,8 +313,8 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                         <div className="col-sm-3">
                             <DatePicker
                                 id="end"
-                                selected={end}
-                                onChange={(date: Date) => setEnd(date)}
+                                selected={formPromotion.end}
+                                onChange={(date: Date) => setFormPromotion({...formPromotion, end: date})}
                                 showTimeSelect
                                 timeFormat="HH:mm"
                                 locale="pt"
@@ -309,7 +323,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                 dateFormat="dd/MM/yyyy hh:mm aa"
                                 className="form-control"
                                 placeholderText="Fim da promoção"
-                                minDate={start}
+                                minDate={formPromotion.start}
 
                             />
                         </div>
@@ -318,22 +332,22 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                             <div className="form-group row">
                                 <label htmlFor="" className="col-form-label col-sm-4">Valor original:</label>
                                 <div className="col-sm-8">
-                                    <label className="col-form-label">R$ {originalValue.toFixed(2)}</label>
+                                    <label className="col-form-label">R$ {formPromotion.originalValue.toFixed(2)}</label>
                                 </div>
                             </div>
                             
                             <div className="form-group row">
                                 <label htmlFor="discount" className="col-form-label col-sm-4">Desconto:</label>
                                 <div className="col-sm-4">
-                                    <select id="select-discount" value={discountType} onChange={(e) => setDiscountType(e.target.value)} className="form-control">
+                                    <select id="select-discount" value={formPromotion.discountType} name="discountType" onChange={handleFormPromotion} className="form-control">
                                         <option value="%">%</option>
                                         <option value="R$">R$</option>
                                     </select>
                                 </div>
                                 <div className="col-sm-4">
                                     <CurrencyInput 
-                                        value={discount}
-                                        onChange={setDiscount}
+                                        value={formPromotion.discount}
+                                        onChange={(mv, fv) => setFormPromotion({...formPromotion, discount: fv})}
                                         className="form-control"
                                         id="discount"
                                     />
@@ -341,13 +355,13 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                             </div>
 
                             <div className="form-group row">
-                                <label htmlFor="discount" className="col-form-label col-sm-4">Valor final:</label>
+                                <label htmlFor="value" className="col-form-label col-sm-4">Valor final:</label>
                                 <div className="col-sm-8">
                                     <CurrencyInput 
                                         inputType="text"
-                                        value={promotionValue}
+                                        value={formPromotion.promotionValue}
                                         prefix="R$ "
-                                        onChange={handlePromotionValue}
+                                        onChange={(mv, fv) => setFormPromotion({...formPromotion, promotionValue: fv})}
                                         className="form-control"
                                         id="value"
                                     />
@@ -390,7 +404,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                         <div className="col-sm-2 flex-center">
                             <div className="buttons">
                                 <div className="btn btn-dark w-100" onClick={handleAddProducts}>
-                                    <button type="button" className="btn btn-dark"> {">>>"} </button>
+                                    <button type="button" className="btn btn-dark text-gold"> {">>>"} </button>
                                 </div>
                             </div>
                         </div>
@@ -404,7 +418,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                         return (
                                             <div key={prod.id} className="row selected-product">
                                                 <div className="col-sm-4 image">
-                                                    <img src={prod.mainImage} alt="" width="100%" />
+                                                    <img src={prod.image_url} alt="" width="100%" />
                                                 </div>
                                                 <div className="col-sm-8">
                                                     <p>{prod.name}</p>
