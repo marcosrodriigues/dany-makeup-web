@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent } from 'react';
 
 import './style.css';
-import { Form, Row, Col, FormCheck, Button } from 'react-bootstrap';
+import { Form, Row, Col, Button } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
 import IPropsFormCategory from '../../interface/IPropsFormCategory';
 import api from '../../services/api';

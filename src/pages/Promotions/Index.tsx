@@ -70,6 +70,7 @@ const Promotions = () => {
             }
 
             tables.push(data);
+            return data;
         })
         setDataTable(tables);
     }, [promotions]);

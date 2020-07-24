@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header/Index';
 
 import './style.css';
-import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 import './style.css';
-import ICategory from '../../interface/ICategory';
 import api from '../../services/api';
 
 import BoxFilter from '../../components/BoxFilter/Index';

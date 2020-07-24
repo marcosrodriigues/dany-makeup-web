@@ -115,11 +115,14 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         let sum_value = 0;
         products.map(prod => {
             sum_value = sum_value + Number(prod.value);
+            return prod;
         })
         setFormPromotion({
             ...formPromotion,
             originalValue: sum_value,
         })
+
+        setFormPromotion(f => { return { ...f, originalValue: sum_value } })
     }, [products])
 
     function getOnlyProducts(categorys: any[]) {
@@ -192,6 +195,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                 if (exist.length === 0)
                     selected_products.push(prod);
             }
+            return prod;
         })
 
         setProducts(selected_products)
@@ -204,6 +208,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         uploadeds.map(up => {
             uploaded_images.push(up); 
             uploaded_files.push(up.file); 
+            return up;
         });
 
         setFiles([...uploaded_files]);
@@ -225,7 +230,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
     }
 
     function handleClickRemoveImage(id: number) {
-        const filtered = products.filter(prod => prod.id != id);
+        const filtered = products.filter(prod => prod.id !== id);
         setProducts(filtered);
     
     }
@@ -245,18 +250,18 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
 
         if (discountType === "R$") {
             if (discount <= originalValue)
-                setFormPromotion({
-                    ...formPromotion,
+                setFormPromotion(f => { return {
+                    ...f,
                     promotionValue: originalValue - discount
-                })
+                } })
             else
                 alert('Valor de desconto excete o máximo.')
         } else if (discountType === "%") {
             if (discount <= 100)
-                setFormPromotion({
-                    ...formPromotion,
+                setFormPromotion(f => { return {
+                    ...f,
                     promotionValue: originalValue - (originalValue * (discount / 100))
-                })
+                } } )
             else
                 alert('Valor de desconto excete o máximo.')
         }
@@ -461,6 +466,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                                 </div>
                                             </div>
                                         )
+                                        
                                     })
                                 }
                             </div>

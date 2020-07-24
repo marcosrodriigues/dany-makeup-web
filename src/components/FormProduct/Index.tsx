@@ -1,7 +1,7 @@
 import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 
 import './style.css';
-import { Form, Row, Col, Button } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import Dropzone from '../Dropzone/Index';
 import IPropsFormProduct from '../../interface/IPropsFormProduto';
 import ICategory from '../../interface/ICategory';
@@ -124,6 +124,8 @@ const FormProduto = ({
         await Promise.all(uploadedFiles.map(f => {
             productImages.push(f);
             files.push(f.file);
+
+            return f;
         }))
         setProductImages([...productImages]);
         setFiles([...files]);
