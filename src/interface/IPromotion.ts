@@ -10,6 +10,7 @@ interface IPromotion {
     discount: number
     promotionValue: number
     image_url: string
+    description: string
     images: string[],
     products: IProduct[]
 }

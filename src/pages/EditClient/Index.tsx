@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Header from '../../components/Header/Index';
 import { useParams } from 'react-router-dom';
 import api from '../../services/api';
-import FormBanner from '../../components/FormBanner/Index';
 import FormClient from '../../components/FormClient/Index';
 
 const EditClient = () => {

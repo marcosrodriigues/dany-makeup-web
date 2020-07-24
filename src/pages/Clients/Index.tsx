@@ -62,7 +62,7 @@ const Clients = () => {
         clients.map((client: any) => {
             const cli = {
                 id: client.id,
-                image: client.image,
+                image: client.avatar,
                 name: client.name,
                 email: client.email,
                 whatsapp: client.whatsapp

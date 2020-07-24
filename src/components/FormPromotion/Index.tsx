@@ -6,7 +6,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import 'react-datepicker/dist/react-datepicker-cssmodules.css';
 import CurrencyInput from 'react-currency-input';
 
-import Dropzone from '../Dropzone/Index';
+import Dropzone from '../Dropzone/Index';   
 import api from '../../services/api';
 import Thumbnails from '../Thumbnails/Index';
 import IFile from '../../interface/IFile';
@@ -16,7 +16,7 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/esm/locale/pt-BR'
 import { FaDownload } from 'react-icons/fa';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { getFilename, buildFormData } from '../../util/util';
+import { getFilename } from '../../util/util';
 import IPromotion from '../../interface/IPromotion';
 registerLocale('pt', pt)
 
@@ -31,7 +31,8 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
         promotionValue: 0.0,
         discount: 0.0,
         image_url: '',
-        discountType: '%'
+        discountType: '%',
+        description: ''
     })
 
     const [products, setProducts] = useState<any[]>([]);
@@ -65,6 +66,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                 discount: promotion.discount,
                 image_url: promotion.image_url,
                 discountType: promotion.discountType,
+                description: promotion.description
             })
             setMainImageUri(promotion.image_url);
         }
@@ -278,7 +280,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
 
                 <legend>Dados da promoção</legend>
                 <div className="section-container">
-                    <div className="form-group row">
+                    <div className="form-group form-row">
                         <label htmlFor="name" className="col-form-label col-sm-1">Nome: </label>
                         <div className="col-sm-11">
                             <input 
@@ -336,7 +338,23 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                 </div>
                             </div>
                             
-                            <div className="form-group row">
+                            </div>
+                    </div>
+                
+                    <div className="form-group form-row">
+                        <label htmlFor="description" className="col-form-label col-sm-1">Descrição: </label>
+                        <div className="col-sm-7">
+                            <textarea 
+                                rows={3}
+                                id="description" 
+                                className="form-control"
+                                value={formPromotion.description}
+                                name="description"
+                                onChange={handleFormPromotion} 
+                            />
+                        </div>
+                        <div className="col-sm-4">
+                        <div className="form-group row">
                                 <label htmlFor="discount" className="col-form-label col-sm-4">Desconto:</label>
                                 <div className="col-sm-4">
                                     <select id="select-discount" value={formPromotion.discountType} name="discountType" onChange={handleFormPromotion} className="form-control">
@@ -367,6 +385,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                                     />
                                 </div>
                             </div>
+                        
                         </div>
                     </div>
                 </div>
