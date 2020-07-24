@@ -1,7 +1,14 @@
 import axios from 'axios';
 
+const type = 'test';
+
+const baseURL = 
+    type === 'test' ? 'https://api-danymakeup.herokuapp.com' :
+    type === 'prod' ? 'http://192.168.2.14:3333' :
+    'http://192.168.2.14:3333'
+
 const api = axios.create({
-    baseURL: 'http://192.168.2.14:3333'
+    baseURL
 }) ;
 
 export default api;
