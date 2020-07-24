@@ -28,7 +28,6 @@ const Stores = () => {
 
     useEffect(() => {
         init();
-        console.log(process.env.REACT_APP_DANY_MAKEUP_API || 'http://192.168.2.14:3333');
     }, [currentPage, limitPerPage]);
 
     async function init() {
