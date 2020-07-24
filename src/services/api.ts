@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-const type = 'test';
-
 const api = axios.create({
     baseURL : process.env.DANY_MAKEUP_API || 'http://192.168.2.14:3333'
 }) ;
