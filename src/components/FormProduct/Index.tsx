@@ -23,10 +23,10 @@ const FormProduto = ({
 
     const [formData, setFormData] = useState({
         id: 0,
-        name: '123',
-        short_description: '123',
-        full_description: '123',
-        value: 49.90,
+        name: '',
+        short_description: '',
+        full_description: '',
+        value: 0.0,
         amount: 0,
         image_url: ''
     })

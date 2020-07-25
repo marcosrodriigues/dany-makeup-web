@@ -6,8 +6,8 @@ import api from '../../services/api';
 
 const Login = ({ history }) => {
     const [form, setForm] = useState({
-        username: 'danymakeup_dev',
-        password: 'danymakeup_dev'
+        username: '',
+        password: ''
     });
     const [loading, isLoading] = useState(false);
 
