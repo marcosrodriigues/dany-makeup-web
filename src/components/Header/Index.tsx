@@ -1,11 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 
 import './style.css'
 import { Link, NavLink } from 'react-router-dom';
 
 const Header = ({ current }) => {
+
+    const isSignIn = localStorage.getItem('IS_AUTHENTICATED') || '';
+
+    useEffect(() => {
+        if (isSignIn !== 'true') {
+            redirect();
+        }
+    }, [isSignIn])
+    
+    function redirect() {
+        window.location.href = "/";
+    }
+
+    function handleLogout() {
+        localStorage.clear();
+        redirect();
+    }
+
     return (
+        isSignIn !== 'true' ? <></> : 
         <div className="w100">
             <div className="container">
                 <Navbar bg="dark" expand="lg">
@@ -21,6 +40,7 @@ const Header = ({ current }) => {
                             <Nav.Link as={NavLink} to="/banners" className={`custom-link ${current === 'banners' && "link-active" }` }>Banner</Nav.Link>
                             <Nav.Link as={NavLink} to="/clientes" className={`custom-link ${current === 'clientes' && "link-active" }` }>Clientes</Nav.Link>
                             <Nav.Link as={NavLink} to="/pedidos" className={`custom-link ${current === 'pedidos' && "link-active" }` }>Pedidos</Nav.Link>
+                            <a href="#" className="custom-link nav-link" onClick={handleLogout}>Sair</a>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>

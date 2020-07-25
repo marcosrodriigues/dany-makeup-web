@@ -1,7 +1,5 @@
 import axios from 'axios';
 
-console.log('')
-
 const api = axios.create({
     baseURL : process.env.REACT_APP_DANY_MAKEUP_API || 'http://192.168.2.14:3333'
 }) ;

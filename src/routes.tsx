@@ -24,12 +24,14 @@ import Orders from './pages/Orders/Index';
 import Stores from './pages/Stores/Index';
 import NewStore from './pages/NewStore/Index';
 import EditStore from './pages/EditStore/Index';
+import Login from './pages/Login/Index';
 
 const Routes = () => {
     return (
         <BrowserRouter>
             <Switch>
-                <Route component={Home} path="/" exact />
+                <Route component={Login} path="/" exact />
+                <Route component={Home} path="/dashboard" exact />
                 <Route component={Stores} path="/lojas" exact />
                 <Route component={NewStore} path="/lojas/novo" exact  />
                 <Route component={EditStore} path="/lojas/:id" exact />
