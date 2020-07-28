@@ -6,10 +6,10 @@ import { Link, NavLink } from 'react-router-dom';
 
 const Header = ({ current }) => {
 
-    const isSignIn = localStorage.getItem('IS_AUTHENTICATED') || '';
+    const isSignIn = localStorage.getItem('IS_AUTHENTICATED') === 'true' || false;
 
     useEffect(() => {
-        if (isSignIn !== 'true') {
+        if (!isSignIn) {
             redirect();
         }
     }, [isSignIn])
@@ -24,11 +24,11 @@ const Header = ({ current }) => {
     }
 
     return (
-        isSignIn !== 'true' ? <></> : 
+        !isSignIn ? <></> : 
         <div className="w100">
             <div className="container">
                 <Navbar bg="dark" expand="lg">
-                    <Navbar.Brand><span className="custom-link"><Link to="/" className="custom-link">Dany Makeup</Link></span></Navbar.Brand>
+                    <Navbar.Brand><span className="custom-link"><Link to="/dashboard" className="custom-link">Dany Makeup</Link></span></Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
                         <Nav className="custom-nav">
