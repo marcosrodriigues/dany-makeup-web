@@ -9,7 +9,7 @@ const EditClient = () => {
     const { id } = useParams();
 
     const [client, setClient] = useState();
-    const [address, setAddress] = useState();
+    const [address, setAddress] = useState([]);
 
     useEffect(() => {
         if (id) {
@@ -17,8 +17,6 @@ const EditClient = () => {
                 const { user, address } = response.data;
                 setClient(user);
                 setAddress(address);
-
-                console.log(user, address);
             })
         }
     }, [id])

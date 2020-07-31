@@ -3,7 +3,7 @@ interface IClient {
     name: string,
     email: string,
     password: string,
-    image: string,
+    avatar: string,
     fb_id: string,
     whatsapp: string
 }

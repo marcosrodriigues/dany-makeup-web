@@ -95,7 +95,7 @@ const FormAddress : React.FC<Props> = ({
     return (
     <div className="box-address">
         <legend>
-            Endereço
+            Endereço {addressForm.name}
         </legend>
         <div className="col-sm-12">
             <div className="form-group row">
