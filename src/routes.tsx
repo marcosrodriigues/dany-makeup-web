@@ -37,29 +37,29 @@ const Routes = () => {
         <BrowserRouter>
             <Switch>
                 <Route component={Login} path="/" exact />
-                <Route component={Home} path="/dashboard"  />
-                <Route component={Stores} path="/lojas"  />
-                <Route component={NewStore} path="/lojas/novo"   />
-                <Route component={EditStore} path="/lojas/:id"  />
-                <Route component={Manufacturers} path="/fabricantes"  />
-                <Route component={NewManufacturer} path="/fabricantes/novo"   />
-                <Route component={EditManufacturer} path="/fabricantes/:id"  />
-                <Route component={Categorys} path="/categorias"  />
-                <Route component={NewCategory} path="/categorias/novo"   />
-                <Route component={EditCategory} path="/categorias/:id"  />
-                <Route component={Products} path="/produtos"  />
-                <Route component={NewProduct} path="/produtos/novo"  />
-                <Route component={EditProduct} path="/produtos/:id"  />
-                <Route component={Promotions} path="/promocoes"  />
-                <Route component={NewPromotion} path="/promocoes/novo"  />
-                <Route component={EditPromotion} path="/promocoes/:id"  />
-                <Route component={Banners} path="/banners"  />
-                <Route component={NewBanner} path="/banners/novo"  />
-                <Route component={EditBanner} path="/banners/:id"  />
-                <Route component={Clients} path="/clientes"  />
-                <Route component={EditClient} path="/clientes/:id"  />
-                <Route component={Orders} path="/pedidos"  />
-                <Route component={EditOrder} path="/pedidos/:id"  />
+                <Route component={Home} path="/dashboard" exact />
+                <Route component={Stores} path="/lojas" exact />
+                <Route component={NewStore} path="/lojas/novo" exact  />
+                <Route component={EditStore} path="/lojas/:id" exact />
+                <Route component={Manufacturers} path="/fabricantes" exact />
+                <Route component={NewManufacturer} path="/fabricantes/novo" exact  />
+                <Route component={EditManufacturer} path="/fabricantes/:id" exact />
+                <Route component={Categorys} path="/categorias" exact />
+                <Route component={NewCategory} path="/categorias/novo" exact  />
+                <Route component={EditCategory} path="/categorias/:id" exact />
+                <Route component={Products} path="/produtos" exact />
+                <Route component={NewProduct} path="/produtos/novo" exact />
+                <Route component={EditProduct} path="/produtos/:id" exact />
+                <Route component={Promotions} path="/promocoes" exact />
+                <Route component={NewPromotion} path="/promocoes/novo" exact />
+                <Route component={EditPromotion} path="/promocoes/:id" exact />
+                <Route component={Banners} path="/banners" exact />
+                <Route component={NewBanner} path="/banners/novo" exact />
+                <Route component={EditBanner} path="/banners/:id" exact />
+                <Route component={Clients} path="/clientes" exact />
+                <Route component={EditClient} path="/clientes/:id" exact />
+                <Route component={Orders} path="/pedidos" exact />
+                <Route component={EditOrder} path="/pedidos/:id" exact />
                 <Route component={DefaultFrete} path="/frete" />
             </Switch>
         </BrowserRouter>
@@ -105,6 +105,7 @@ const DefaultFrete = () => {
                     <label htmlFor="CEP" className="form-label col-form-label col-sm-1" >CEP: </label>
                     <div className=" col-sm-4">
                         <InputMask 
+                            required
                             mask="99999-999"
                             id="cep"
                             className="form-control"
@@ -117,6 +118,7 @@ const DefaultFrete = () => {
                     <label htmlFor="name" className="form-label col-form-label col-sm-1">Nome: </label>
                     <div className="col-sm-4">
                         <input type="text"
+                        required
                             className="form-control"
                             name="name"
                             value={name}
