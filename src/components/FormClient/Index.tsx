@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import './style.css';
-import { Form, Row, Col, Button } from 'react-bootstrap';
-import CustomAlert from '../CustomAlert/Index';
+import { Form, Row, Col } from 'react-bootstrap';
 
 import IClient from '../../interface/IClient';
 import IAddress from '../../interface/IAddress';
@@ -12,9 +11,6 @@ import FormAddress from '../FormAddress/Index';
 const FormClient = ({ client = { } as IClient, address = [] as IAddress[] }) => {
 
     const [user, setUser] = useState({} as IClient)
-
-    const [citys, setCitys] = useState([]);
-    const [ufs, setUfs] = useState([])
 
     useEffect(() => {
         if (client.id !== undefined) {

@@ -25,6 +25,7 @@ import Stores from './pages/Stores/Index';
 import NewStore from './pages/NewStore/Index';
 import EditStore from './pages/EditStore/Index';
 import Login from './pages/Login/Index';
+import EditOrder from './pages/EditOrder/Index';
 
 const Routes = () => {
     return (
@@ -53,6 +54,7 @@ const Routes = () => {
                 <Route component={Clients} path="/clientes" exact />
                 <Route component={EditClient} path="/clientes/:id" exact />
                 <Route component={Orders} path="/pedidos" exact />
+                <Route component={EditOrder} path="/pedidos/:id" exact />
             </Switch>
         </BrowserRouter>
     )

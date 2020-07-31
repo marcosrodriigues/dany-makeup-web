@@ -15,7 +15,7 @@ const Orders = () => {
     const [search, setSearch] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [limitPerPage, setLimitPerPage] = useState(5);
+    const [limitPerPage, setLimitPerPage] = useState(10);
     const [count, setCount] = useState(0);
     const [offset, setOffset] = useState(0);
     const [start, setStart] = useState(0);
@@ -42,11 +42,14 @@ const Orders = () => {
         let tables : any = [];
 
         orders && orders.map((order: any) => {
+            const status = 
+                order.transaction?.status === 'paid' ? 'PAGO' : 'EM ABERTO'
             const n = {
-                id: order.id,
-                client: order.client,
-                products: order.products,
-                value: order.value
+                id: `${order.id}`,
+                client: order.user.name,
+                products: order.items.map(item => item.name).join(', '),
+                value: `R$ ${order.price.replace('.',',')}`,
+                status
             };
             tables.push(n);
             return order;
@@ -100,7 +103,7 @@ const Orders = () => {
                             onChangeLimitPerPage={handleChangeLimitPerPage}
                             onSubmit={handleSubmitFilterForm}
                             fieldProps={[{
-                                name: 'Cliente, produto, categoria, fabricante...',
+                                name: 'Cliente, produto...',
                                 value: search,
                                 setValue: setSearch
                             }]}
@@ -113,7 +116,7 @@ const Orders = () => {
 
                     <div className="box-table table-responsive">
                         <CustomTable
-                            headers={["#", "Cliente", "Produtos", "Valor"]}
+                            headers={["#", "Cliente", "Produtos", "Valor", 'Status']}
                             array={dataTable}
                             route="pedidos"
                             routeApi="orders"
