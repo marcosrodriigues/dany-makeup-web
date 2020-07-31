@@ -84,7 +84,16 @@ const FormStore : React.FC<Props> = ({ store }) => {
         setShowError(false);
         setErrors([]);
 
-        if (!isDataValid(formStore) || !isDataValid(addressForm)) {
+        const validAddress = {
+            cep: addressForm.cep,
+            street: addressForm.street,
+            number: addressForm.number,
+            neighborhood: addressForm.neighborhood,
+            city: addressForm.city,
+            uf: addressForm.uf
+        }
+
+        if (!isDataValid(formStore) || !isDataValid(validAddress)) {
             setErrors(["Campos obrigatórios não preenchidos"]);
             setShowError(true);
             return;
