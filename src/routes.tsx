@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, HashRouter } from 'react-router-dom'
 
 import Home from './pages/Home/Index';
 import Products from './pages/Products/Index';
@@ -33,6 +33,7 @@ import GifLoading from './components/GifLoading/Index';
 
 const Routes = () => {
     return (
+        <HashRouter>
         <BrowserRouter>
             <Switch>
                 <Route component={Login} path="/" exact />
@@ -62,6 +63,7 @@ const Routes = () => {
                 <Route component={DefaultFrete} path="/frete" />
             </Switch>
         </BrowserRouter>
+        </HashRouter>
     )
 }
 
