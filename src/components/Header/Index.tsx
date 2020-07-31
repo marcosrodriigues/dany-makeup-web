@@ -41,6 +41,8 @@ const Header = ({ current }) => {
                             <Nav.Link as={NavLink} to="/clientes" className={`custom-link ${current === 'clientes' && "link-active" }` }>Clientes</Nav.Link>
                             <Nav.Link as={NavLink} to="/pedidos" className={`custom-link ${current === 'pedidos' && "link-active" }` }>Pedidos</Nav.Link>
                             <a href="#" className="custom-link nav-link" onClick={handleLogout}>Sair</a>
+
+                            <Nav.Link as={NavLink} to="/frete" className={`custom-link ${current === 'frete' && "link-active" }` }>frete</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
