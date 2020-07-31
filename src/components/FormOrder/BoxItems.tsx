@@ -1,5 +1,4 @@
 import React from 'react';
-import { O_TRUNC } from 'constants';
 
 const BoxItems = ({
     items

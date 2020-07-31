@@ -117,11 +117,6 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
             sum_value = sum_value + Number(prod.value);
             return prod;
         })
-        setFormPromotion({
-            ...formPromotion,
-            originalValue: sum_value,
-        })
-
         setFormPromotion(f => { return { ...f, originalValue: sum_value } })
     }, [products])
 

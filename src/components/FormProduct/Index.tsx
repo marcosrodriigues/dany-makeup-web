@@ -229,10 +229,7 @@ const FormProduto = ({
     useEffect(() => {
         let amount = 0;
         stocks.map(s => amount += s.amount);
-        setFormData({
-            ...formData,
-            amount
-        })
+        setFormData(f => { return { ...f, amount }})
     }, [stocks])
     
     return (
