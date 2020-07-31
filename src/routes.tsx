@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
@@ -26,6 +26,9 @@ import NewStore from './pages/NewStore/Index';
 import EditStore from './pages/EditStore/Index';
 import Login from './pages/Login/Index';
 import EditOrder from './pages/EditOrder/Index';
+
+import InputMask from 'react-input-mask';
+import api from './services/api';
 
 const Routes = () => {
     return (
@@ -55,10 +58,98 @@ const Routes = () => {
                 <Route component={EditClient} path="/clientes/:id" exact />
                 <Route component={Orders} path="/pedidos" exact />
                 <Route component={EditOrder} path="/pedidos/:id" exact />
+                <Route component={DefaultFrete} path="/frete" />
             </Switch>
         </BrowserRouter>
     )
 }
 
 export default Routes;
+
+const DefaultFrete = () => {
+    const [cep, setCep] = useState('');
+    const [name, setName] = useState('');
+    const [fretes, setFretes] = useState([] as any[]);
+    const [loading, isLoading] = useState(false);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        isLoading(true)
+        try {
+            const { data } = await api.get('correios/frete', { params: {cep}})
+            const nFrete: any = {
+                cep,
+                name,
+                fretes: [
+                    ...data
+                ]
+            }
+            setFretes([
+                ...fretes,
+                nFrete
+            ]);
+        } catch (err) {
+            alert(`ERROR ${err}`);
+            console.log('ERRO BUSCA CEP', err)
+        }
+        isLoading(false);
+    }
+
+    return (
+        <div className="col-sm-6 box">
+            <form onSubmit={handleSubmit}>
+                <div className="row">   
+                    <label htmlFor="CEP" className="form-label col-form-label col-sm-1" >CEP: </label>
+                    <div className=" col-sm-4">
+                        <InputMask 
+                            mask="99999-999"
+                            id="cep"
+                            className="form-control"
+                            name="cep"
+                            value={cep}
+                            onChange={(e) => setCep(e.target.value)}
+                        />
+                    </div>
+
+                    <label htmlFor="name" className="form-label col-form-label col-sm-1">Nome: </label>
+                    <div className="col-sm-4">
+                        <input type="text"
+                            className="form-control"
+                            name="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                    </div>
+                    <button type="submit" className="btn btn-primary">CALCULAR</button>
+                </div>
+            </form>
+
+            {
+                loading ? <div className="box">CARREGANDO</div> : 
+                fretes.length > 0 &&
+                    fretes.map(frete => (
+                        <div className="col-sm-12 box">
+                            <label className="form-label col-form-label col-sm-6" ><strong>{frete.name}</strong></label>
+                            <label className="form-label col-form-label col-sm-6 right" >{frete.cep}</label>
+
+                            {frete.fretes.map(f => (
+                                <div className='row'>
+                                    <div className="col-sm-12 box">
+                                        <label className="form-label col-form-label col-sm-6" ><strong>SERVIÇO</strong></label>
+                                        <label className="form-label col-form-label col-sm-6 right" >{f.name}</label>
+
+                                        <label className="form-label col-form-label col-sm-6" ><strong>VALOR</strong></label>
+                                        <label className="form-label col-form-label col-sm-6 right" >R$ {f.value.toFixed(2).replace('.',',')}</label>
+
+                                        <label className="form-label col-form-label col-sm-6" ><strong>PRAZO</strong></label>
+                                        <label className="form-label col-form-label col-sm-6 right" >{f.deadline} dias úteis</label>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    ))
+            }
+        </div>
+    )
+}
 
