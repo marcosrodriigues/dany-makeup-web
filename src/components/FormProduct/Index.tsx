@@ -12,6 +12,7 @@ import IManufacturer from '../../interface/IManufacturer';
 import IFile from '../../interface/IFile';
 import Thumbnails from '../Thumbnails/Index';
 import { getFilename, buildFormData, isDataValid } from '../../util/util';
+import GifLoading from '../GifLoading/Index';
 
 
 const FormProduto = ({
@@ -46,6 +47,9 @@ const FormProduto = ({
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
     
+
+    const [loading, isLoading] = useState(false);
+
     useEffect(() => {
         if (product) {
             setFormData({
@@ -82,7 +86,6 @@ const FormProduto = ({
 
         if(estoques) {
             setStocks(estoques);
-            console.log(estoques);
         }
     }, [product, categorys, images, estoques])
 
@@ -132,6 +135,7 @@ const FormProduto = ({
     }
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+        if (loading) return;
         event.preventDefault();
 
         setShowSucess(false);
@@ -150,6 +154,8 @@ const FormProduto = ({
             manufacturer_id: productManufacturer
         }
 
+
+        isLoading(true)
         const data = new FormData();
         buildFormData(data, prod);
 
@@ -177,6 +183,7 @@ const FormProduto = ({
             setShowError(true);
             setErrors([err]);
         }
+        isLoading(false);
     }
 
     function handleSelect(event: ChangeEvent<HTMLSelectElement>) {
@@ -390,9 +397,12 @@ const FormProduto = ({
 
 
             <div className="col-sm-12 mt16 mb16">
-                <div className="w-100">
-                    <button type="submit" className="btn btn-dark w-100">CADASTRAR</button>
-                </div>
+                {
+                    loading ? <GifLoading /> :
+                    <div className="w-100">
+                        <button type="submit" className="btn btn-dark w-100">CADASTRAR</button>
+                    </div>
+                }
             </div>
         </Form>
     )

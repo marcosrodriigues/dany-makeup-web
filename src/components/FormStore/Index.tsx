@@ -8,6 +8,7 @@ import CustomAlert from '../CustomAlert/Index';
 import IFile from '../../interface/IFile';
 import FormAddress from '../FormAddress/Index';
 import { isDataValid, buildFormData } from '../../util/util';
+import GifLoading from '../GifLoading/Index';
 
 interface Props {
     store?: any;
@@ -40,6 +41,8 @@ const FormStore : React.FC<Props> = ({ store }) => {
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
     
+    const [loading, isLoading] = useState(false);
+
     useEffect(() => {
         if (store) {
             setFormStore({
@@ -78,6 +81,7 @@ const FormStore : React.FC<Props> = ({ store }) => {
     }
 
     async function handleSubmit(event: FormEvent) {
+        if(loading) return;
         event.preventDefault();
 
         setShowSucess(false);
@@ -112,6 +116,7 @@ const FormStore : React.FC<Props> = ({ store }) => {
             uf: addressForm.uf,
         }
 
+        isLoading(true);
         const formData = new FormData();
         buildFormData(formData, formStore);
         buildFormData(formData, formAddress);
@@ -128,6 +133,7 @@ const FormStore : React.FC<Props> = ({ store }) => {
             setShowError(true);
             setErrors([err]);
         }
+        isLoading(false);
     }
 
     return (
@@ -174,9 +180,12 @@ const FormStore : React.FC<Props> = ({ store }) => {
                     onAddressChange={handleAddressChange}
                 />
 
-                <Form.Group as={Row} controlId="button" className="form-button">
-                    <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
-                </Form.Group>
+                {
+                    loading ? <GifLoading /> :
+                    <Form.Group as={Row} controlId="button" className="form-button">
+                        <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
+                    </Form.Group>
+                }
             </div>        
         </Form>
     )

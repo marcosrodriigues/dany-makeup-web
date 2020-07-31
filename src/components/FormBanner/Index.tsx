@@ -10,6 +10,7 @@ import IFile from '../../interface/IFile';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import pt from 'date-fns/esm/locale/pt-BR';
 import IBanner from '../../interface/IBanner';
+import GifLoading from '../GifLoading/Index';
 registerLocale('pt', pt)
 
 const FormBanner = ({ banner = { } as IBanner }) => {
@@ -27,7 +28,8 @@ const FormBanner = ({ banner = { } as IBanner }) => {
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
-    
+
+    const [loading, isLoading] = useState(false);
 
     useEffect(() => {
         if (banner.id !== undefined) {
@@ -46,6 +48,7 @@ const FormBanner = ({ banner = { } as IBanner }) => {
     }
 
     async function handleSubmit(event: FormEvent) {
+        if (loading) return;
         event.preventDefault();
 
         setShowSucess(false);
@@ -58,6 +61,8 @@ const FormBanner = ({ banner = { } as IBanner }) => {
             return;
         }
 
+
+        isLoading(true)
         const data = new FormData();
 
         data.append('id', String(id));
@@ -80,6 +85,7 @@ const FormBanner = ({ banner = { } as IBanner }) => {
             setShowError(true);
             setErrors([err]);
         }
+        isLoading(false);
     }
 
     return (
@@ -154,9 +160,11 @@ const FormBanner = ({ banner = { } as IBanner }) => {
                         />
                     </div>
                 </div>
-                <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
-                </Form.Group>
+                {loading ? <GifLoading /> :
+                    <Form.Group as={Row} controlId="button" className="w-100">
+                        <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
+                    </Form.Group>
+                }
             </div>
         </Form>
     )

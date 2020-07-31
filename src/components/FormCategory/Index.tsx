@@ -7,6 +7,7 @@ import IPropsFormCategory from '../../interface/IPropsFormCategory';
 import api from '../../services/api';
 import CustomAlert from '../CustomAlert/Index';
 import IFile from '../../interface/IFile';
+import GifLoading from '../GifLoading/Index';
 
 const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
 
@@ -21,6 +22,9 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
+
+
+    const [loading, isLoading] = useState(false);
     
     useEffect(() => {
         if (category) {
@@ -37,6 +41,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
     }
 
     async function handleSubmit(event: FormEvent) {
+        if(loading) return;
         event.preventDefault();
 
         setShowSucess(false);
@@ -49,6 +54,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             return;
         }
 
+        isLoading(true);
         const data = new FormData();
 
         data.append('id', String(id));
@@ -66,6 +72,7 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
             setShowError(true);
             setErrors([err]);
         }
+        isLoading(false);
     }
 
     useEffect(() => {
@@ -106,9 +113,12 @@ const FormCategory : React.FC<IPropsFormCategory> = ({ category }) => {
                         />
                     </Col>
                 </Form.Group>
-                <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
-                </Form.Group>
+                {
+                    loading ? <GifLoading /> :
+                    <Form.Group as={Row} controlId="button" className="w-100">
+                        <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
+                    </Form.Group>
+                }
             </div>
         </Form>
     )

@@ -18,6 +18,7 @@ import { FaDownload } from 'react-icons/fa';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { getFilename } from '../../util/util';
 import IPromotion from '../../interface/IPromotion';
+import GifLoading from '../GifLoading/Index';
 registerLocale('pt', pt)
 
 const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], promotionImages = [] }) => {
@@ -48,6 +49,9 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
+
+
+    const [loading, isLoading] = useState(false);
 
     useEffect(() => {
         init();
@@ -133,6 +137,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
     }
 
     async function handleSubmit(e) {
+        if (loading) return;
         e.preventDefault();
 
         setShowSucess(false);
@@ -154,6 +159,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
             data.append('files[]', files[i]);
         }
 
+        isLoading(true)
         try {
             if (formPromotion.id !== 0) await api.put('promotions', data);
             else await api.post('promotions', data);
@@ -164,6 +170,7 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
             setShowError(true);
             setErrors(err.error);
         }
+        isLoading(false)
     }
 
     function handleSelect(e) {
@@ -487,7 +494,10 @@ const FormPromotion = ({ promotion = {} as IPromotion, promotionProducts = [], p
                 </div>
             
                 <div className="section-container w-100">
-                    <button className="btn btn-dark w-100"><span className="text-gold">Salvar</span></button>
+                    {
+                        loading ? <GifLoading /> :
+                        <button className="btn btn-dark w-100"><span className="text-gold">Salvar</span></button>
+                    }
                 </div>
             </div>
         </form>

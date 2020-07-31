@@ -7,6 +7,7 @@ import api from '../../services/api';
 import CustomAlert from '../CustomAlert/Index';
 import IPropsFormManufacturer from '../../interface/IPropsFormManufacturer';
 import IFile from '../../interface/IFile';
+import GifLoading from '../GifLoading/Index';
 
 const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) => {
 
@@ -20,6 +21,8 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
     const [showSucess, setShowSucess] = useState<boolean>(false);
     const [showError, setShowError] = useState<boolean>(false);
     const [errors, setErrors] = useState<string[]>([]);
+
+    const [loading, isLoading] = useState(false);
     
     useEffect(() => {
         if (manufacturer) {
@@ -36,6 +39,7 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
     }
 
     async function handleSubmit(event: FormEvent) {
+        if (loading) return;
         event.preventDefault();
 
         setShowSucess(false);
@@ -57,6 +61,7 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
             return;
         }
 
+        isLoading(true);
         const data = new FormData();
 
         data.append('id', String(id));
@@ -73,6 +78,7 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
             setShowError(true);
             setErrors([err]);
         }
+        isLoading(false);
     }
 
     return (
@@ -110,9 +116,12 @@ const FormManufacturer : React.FC<IPropsFormManufacturer> = ({ manufacturer }) =
                         />
                     </Col>
                 </Form.Group>
-                <Form.Group as={Row} controlId="button" className="w-100">
-                    <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
-                </Form.Group>
+                {
+                    loading ? <GifLoading /> :
+                    <Form.Group as={Row} controlId="button" className="w-100">
+                        <Button variant="dark" className="w-100" type="submit" >Salvar</Button>
+                    </Form.Group>
+                }
             </div>
         </Form>
     )
