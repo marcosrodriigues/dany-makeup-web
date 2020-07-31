@@ -29,6 +29,7 @@ import EditOrder from './pages/EditOrder/Index';
 
 import InputMask from 'react-input-mask';
 import api from './services/api';
+import GifLoading from './components/GifLoading/Index';
 
 const Routes = () => {
     return (
@@ -125,7 +126,7 @@ const DefaultFrete = () => {
             </form>
 
             {
-                loading ? <div className="box">CARREGANDO</div> : 
+                loading ? <GifLoading /> : 
                 fretes.length > 0 &&
                     fretes.map(frete => (
                         <div className="col-sm-12 box">
